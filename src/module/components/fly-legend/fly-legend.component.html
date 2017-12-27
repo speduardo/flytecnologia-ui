@@ -1,0 +1,11 @@
+<div [class]="colspanClass">
+    <fieldset class="fly-legend-fieldset">
+        <legend class="fly-legend-title">
+            <i [ngClass]="iconClass"
+               *ngIf="!!iconClass"
+               class="fly-legend-icon"></i>
+            <span> {{heading}} </span>
+        </legend>
+        <ng-content></ng-content>
+    </fieldset>
+</div>

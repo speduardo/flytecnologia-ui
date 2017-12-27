@@ -1,0 +1,38 @@
+{
+  "generator-ngx-library": {
+    "version": "5.4.0",
+    "authorName": "Jullierme Barros",
+    "authorEmail": "julliermegyn@gmail.com",
+    "githubUsername": "jullierme",
+    "githubRepoName": "flytecnologia-ui",
+    "projectName": "flytecnologia-ui",
+    "projectVersion": "0.0.1",
+    "projectDescription": "Angular library",
+    "projectKeywords": [
+      "ng",
+      "angular",
+      "library"
+    ],
+    "ngVersion": "5.0.0",
+    "ngModules": [
+      "core",
+      "common",
+      "forms",
+      "http",
+      "compiler",
+      "router",
+      "platform-browser-dynamic",
+      "platform-browser",
+      "animations"
+    ],
+    "otherDependencies": [
+      "ngx-bootstrap"
+    ],
+    "dependenciesRange": "^",
+    "ngPrefix": "fly",
+    "useGreenkeeper": true,
+    "useCompodoc": true,
+    "enforceNgGitCommitMsg": true,
+    "exclusions": []
+  }
+}
