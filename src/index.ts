@@ -1,1 +1,1 @@
-export * from './module/ngfly-lib.module';
+export * from './module/flytecnologia-ui.module';
