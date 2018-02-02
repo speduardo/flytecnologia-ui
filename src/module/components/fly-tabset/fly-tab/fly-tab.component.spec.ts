@@ -1,5 +1,5 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
-import {FlyTabComponent} from './fly-tab.component';
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { FlyTabComponent } from './fly-tab.component';
 
 describe('FlyTabComponent', () => {
     let component: FlyTabComponent;

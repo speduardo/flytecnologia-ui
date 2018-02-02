@@ -1,0 +1,35 @@
+@import '~@angular/material/theming';
+@import '../../../../theming';
+
+body .ui-datatable .ui-datatable-thead > tr > th, body .ui-datatable .ui-datatable-tfoot > tr > td {
+    background-color: mat-color($candy-app-primary, 50);
+}
+
+body .ui-datatable .ui-datatable-data tr.ui-datatable-even.ui-state-highlight {
+    background-color: mat-color($candy-app-primary, 500);
+    color: #ffffff;
+    border-color: mat-color($candy-app-primary, 800);
+}
+
+body .ui-datatable .ui-datatable-data tr.ui-state-highlight {
+    border-color: mat-color($candy-app-primary, 500);
+}
+
+.ui-datatable-footer .ui-widget-header {
+    background-color: #FFF !important;
+}
+
+.page-item.active .page-link {
+    background-color: mat-color($candy-app-primary, 500);
+    border-color: mat-color($candy-app-primary, 500);
+}
+
+.page-link {
+    color: mat-color($candy-app-primary, 500);
+    background-color: #fff;
+    border: 1px solid #ddd;
+}
+
+::ng-deep .ui-datatable-scrollable-view .ui-datatable-scrollable-body {
+    border: 1px solid #D5D5D5;
+}

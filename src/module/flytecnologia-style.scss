@@ -1,0 +1,101 @@
+.fly-header {
+    margin-top: 15px;
+    color: #717171;
+    font-size: 20px;
+
+    .mat-icon {
+        height: auto;
+    }
+}
+
+.fly-header-icon {
+    line-height: 24px;
+    padding: 8px;
+    width: 40px;
+}
+
+.fly-header-effect {
+    position: relative;
+    text-decoration: none;
+    color: #717171;
+}
+
+.fly-header-effect:hover {
+
+}
+
+.fly-header-effect:before {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 1px;
+    bottom: 0;
+    left: 0;
+    background-color: #717171;
+    visibility: hidden;
+    -webkit-transform: scaleX(0);
+    transform: scaleX(0);
+    -webkit-transition: all 0.3s ease-in-out 0s;
+    transition: all 0.3s ease-in-out 0s;
+}
+
+.fly-header-effect:hover:before {
+    visibility: visible;
+    -webkit-transform: scaleX(1);
+    transform: scaleX(1);
+}
+
+.mat-toolbar-shadow {
+    box-shadow: 0 0 4px rgba(0, 0, 0, .14), 0 4px 8px rgba(0, 0, 0, .28);
+}
+
+.sexy-colorgraph {
+    width: 100%;
+    height: 2px;
+    border: 0;
+    background-image: -webkit-linear-gradient(left, #FFF, #429742, #FFF);
+    background-image: -moz-linear-gradient(left, #FFF, #429742, #FFF);
+    background-image: -ms-linear-gradient(left, #FFF, #429742, #FFF);
+    background-image: -o-linear-gradient(left, #FFF, #429742, #FFF);
+}
+
+.div-header-hr {
+    margin-top: 20px;
+    margin-bottom: 30px;
+    height: 3px;
+    padding: 0;
+}
+
+.mat-raised-button.mat-primary, .mat-fab.mat-primary, .mat-mini-fab.mat-primary {
+    color: #FFF !important;
+}
+
+label {
+    color: #525252;
+}
+
+.margin-zero {
+    margin-right: 0 !important;
+    margin-left: 0 !important;
+}
+
+.padding-zero {
+    padding: 0;
+}
+
+.fly-form input:not(:focus).ng-touched.ng-invalid.form-control,
+.fly-form select:not(:focus).ng-touched.ng-invalid.form-control,
+.fly-form textarea:not(:focus).ng-touched.ng-invalid.form-control {
+    border-color: #e9322d !important;
+}
+
+.fly-form .has-error label {
+    color: #e9322d !important;
+}
+
+.fly-form input:focus.ng-touched.ng-invalid.form-control {
+    border-color: #e9322d;
+    -webkit-box-shadow: 0 0 6px #f8b9b7;
+    -moz-box-shadow: 0 0 6px #f8b9b7;
+    box-shadow: 0 0 6px #f8b9b7;
+}

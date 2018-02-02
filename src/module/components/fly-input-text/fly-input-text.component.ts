@@ -1,11 +1,9 @@
-import {
-    AfterViewInit, Component, ElementRef, forwardRef, Input, OnInit, ViewChild,
-    ViewEncapsulation
-} from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Input, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 
-import {FlyUtilService} from '../../services/fly-util.service';
-import {FlyBaseInput} from './../base/fly-base-input';
-import {NG_VALUE_ACCESSOR} from '@angular/forms';
+import { FlyUtilService } from '../../services/fly-util.service';
+import { FlyBaseInput } from '../base/fly-base-input';
+import { NgModel } from '@angular/forms';
+import { ngModelProvider } from '../base/fly-abstract-ng-model';
 
 let nextUniqueId = 0;
 
@@ -15,14 +13,9 @@ let nextUniqueId = 0;
     styleUrls: ['./fly-input-text.component.scss'],
     encapsulation: ViewEncapsulation.None,
     providers: [
-        {
-            provide: NG_VALUE_ACCESSOR,
-            useExisting: forwardRef(() => FlyInputTextComponent),
-            multi: true
-        }
+        ngModelProvider(FlyInputTextComponent)
     ]
 })
-
 export class FlyInputTextComponent extends FlyBaseInput implements AfterViewInit, OnInit {
     @Input() label: string;
     @Input() hideLabel: boolean;
@@ -30,7 +23,6 @@ export class FlyInputTextComponent extends FlyBaseInput implements AfterViewInit
     @Input() required = false;
     @Input() requiredConditional = false;
     @Input() placeholder = '';
-    @Input() disabled = false;
     @Input() readonly = false;
     @Input() maxlength = 1000;
     @Input() minlength: number;
@@ -46,6 +38,8 @@ export class FlyInputTextComponent extends FlyBaseInput implements AfterViewInit
 
     @ViewChild('inputHtml') inputHtml: ElementRef;
 
+    @ViewChild('inputField') inputField: NgModel;
+
     constructor(private flyUtilService: FlyUtilService) {
         super(flyUtilService);
     }
@@ -56,6 +50,10 @@ export class FlyInputTextComponent extends FlyBaseInput implements AfterViewInit
 
     ngAfterViewInit(): void {
         // this.configMask();
+    }
+
+    writeValue(value: any) {
+        super.writeValue(value);
     }
 
     /*configMask() {

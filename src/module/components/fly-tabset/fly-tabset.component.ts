@@ -1,11 +1,9 @@
 import {
-    AfterContentInit,
-    Component, ContentChildren, EventEmitter, Input, OnInit, Output, QueryList,
+    AfterContentInit, Component, ContentChildren, EventEmitter, Input, OnInit, Output, QueryList,
     ViewEncapsulation
 } from '@angular/core';
-import {FlyTabComponent} from './fly-tab/fly-tab.component';
-import {FlyColspanInterface} from '../base/interface/fly-colspan.interface';
-import {FlyUtilService} from '../../services/fly-util.service';
+import { FlyTabComponent } from './fly-tab/fly-tab.component';
+import { FlyUtilService } from '../../services/fly-util.service';
 
 @Component({
     selector: 'fly-tabset',
@@ -13,7 +11,7 @@ import {FlyUtilService} from '../../services/fly-util.service';
     styleUrls: ['./fly-tabset.component.scss'],
     encapsulation: ViewEncapsulation.None
 })
-export class FlyTabsetComponent implements AfterContentInit, OnInit, FlyColspanInterface {
+export class FlyTabsetComponent implements AfterContentInit, OnInit {
 
     /*
      https://juristr.com/blog/2016/02/learning-ng2-creating-tab-component/
@@ -26,30 +24,39 @@ export class FlyTabsetComponent implements AfterContentInit, OnInit, FlyColspanI
     @Input() justified: boolean;
     @Input() type: string;
     @Input() color: string;
-    @Input() colspan: number;
-    private _selectedIndex: number;
-
     @Output() selectedIndexChange = new EventEmitter<number>();
-
     @Output() public select: EventEmitter<FlyTabComponent> = new EventEmitter();
 
-    private classColor: string;
-    private classColspan: string;
+    public classColor: string;
 
     constructor(private flyUtilService: FlyUtilService) {
     }
 
+    private _selectedIndex: number;
+
+    @Input()
+    public get selectedIndex() {
+        return this._selectedIndex;
+    }
+
+    public set selectedIndex(index) {
+        if (this._selectedIndex === index) {
+            return;
+        }
+
+        if (this.tabs && this.tabs.length > index) {
+            this.selectTab(this.tabs.toArray()[index]);
+        } else if (index) {
+            this._selectedIndex = index;
+        }
+    }
+
     ngOnInit() {
         this.defineClassColor();
-        this.defineClassColspan();
     }
 
     defineClassColor() {
         this.classColor = 'nav-tabs-' + (this.color ? this.color : 'light-blue');
-    }
-
-    defineClassColspan() {
-        this.classColspan = this.flyUtilService.getColClass(this.colspan, 12);
     }
 
     ngAfterContentInit() {
@@ -76,22 +83,5 @@ export class FlyTabsetComponent implements AfterContentInit, OnInit, FlyColspanI
         tab.lazy = false;
 
         this.select.emit(tab);
-    }
-
-    @Input()
-    public get selectedIndex() {
-        return this._selectedIndex;
-    }
-
-    public set selectedIndex(index) {
-        if (this._selectedIndex === index) {
-            return;
-        }
-
-        if (this.tabs && this.tabs.length > index) {
-            this.selectTab(this.tabs.toArray()[index]);
-        } else if (index) {
-            this._selectedIndex = index;
-        }
     }
 }

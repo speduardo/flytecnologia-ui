@@ -1,5 +1,5 @@
 <div class="fly-tabset"
-     [ngClass]="[classColor, classColspan]">
+     [ngClass]="[classColor]">
     <ul class="nav"
         [ngClass]="{'nav-tabs': type != 'pills', 'nav-pills': type == 'pills', 'nav-stacked':vertical, 'nav-justified':justified}">
         <li *ngFor="let tab of tabs"

@@ -1,0 +1,71 @@
+<div>
+    <ng-content select="[header]"></ng-content>
+
+    <p-dataTable
+        #flyGridElement
+        [value]="service.provider"
+        [responsive]="true"
+        [selectionMode]="selectionMode"
+        [resizableColumns]="true">
+        <p-header *ngIf="!!header">{{ header }}</p-header>
+        <p-column
+            *ngFor="let col of service.columns"
+            [field]="col.field"
+            [header]="col.header"
+            [style]="col.style"
+            [sortable]="col.sortable">
+            <ng-template
+                pTemplate="header"
+                *ngIf="!!col.headerTemplate">
+                <div [innerHTML]="col.headerTemplate"></div>
+            </ng-template>
+            <ng-template let-row="rowData"
+                         pTemplate="body"
+                         *ngIf="!!col.isButton">
+                <button mat-icon-button
+                        color="primary"
+                        (click)="col.click(service, row)"
+                        type="button">
+                    <mat-icon aria-label="Edit"
+                              fontSet="fa"
+                              fontIcon="fa-edit fa-2x"></mat-icon>
+                </button>
+            </ng-template>
+        </p-column>
+        <p-footer>
+            <div class="row margin-zero padding-zero">
+                <div class="col-md-9 padding-zero">
+                    <pagination
+                        [totalItems]="service.totalElements"
+                        [(ngModel)]="service.filter.page"
+                        [itemsPerPage]="service.filter.size"
+                        firstText="Primeiro"
+                        lastText="Último"
+                        nextText="Próximo"
+                        previousText="Anterior"
+                        [maxSize]="5"
+                        class="pagination-md"
+                        [boundaryLinks]="true"
+                        (pageChanged)="pageChanged($event)"
+                        (numPages)="smallnumPages = $event"
+                        (click)="search()"
+                        [disabled]="service.isSearching"
+                        *ngIf="service.totalPages > 1"
+                    >
+                    </pagination>
+                </div>
+                <div class="col-md-3 padding-zero float-right">
+                    Página {{ service.filter.page }} / {{ service.totalPages }} - Reg: {{ service.totalElements }}
+                </div>
+            </div>
+            <mat-progress-bar mode="indeterminate"
+                              *ngIf="service.isSearching && service.showProgressbarGrid !== false">
+            </mat-progress-bar>
+        </p-footer>
+
+    </p-dataTable>
+
+    <ng-content select="[footer]"></ng-content>
+
+
+</div>

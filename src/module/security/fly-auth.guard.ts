@@ -1,11 +1,10 @@
-import {ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot} from '@angular/router';
-import {Injectable} from '@angular/core';
-import {Observable} from 'rxjs/Observable';
-import {FlyAuthService} from './fly-auth.service';
-
+import { ActivatedRouteSnapshot, CanActivate, CanLoad, Route, Router, RouterStateSnapshot } from '@angular/router';
+import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs/Observable';
+import { FlyAuthService } from './fly-auth.service';
 
 @Injectable()
-export class FlyAuthGuard implements CanActivate {
+export class FlyAuthGuard implements CanActivate, CanLoad {
 
     constructor(private auth: FlyAuthService,
                 private router: Router) {
@@ -14,18 +13,31 @@ export class FlyAuthGuard implements CanActivate {
     canActivate(route: ActivatedRouteSnapshot,
                 state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
 
+        const token = FlyAuthService.token();
+
+        if (!token) {
+            this.router.navigate(['/login']);
+            return false;
+        }
+
         if (this.auth.isAccessTokenInvalid()) {
             console.log('Navegação com access token inválido. Obtendo novo token...');
 
-            return this.auth.getNewAccessToken()
-                .then(() => {
-                    if (this.auth.isAccessTokenInvalid()) {
-                        this.router.navigate(['/login']);
-                        return false;
-                    }
-
-                    return true;
-                });
+            return new Observable(observer => {
+                this.auth.getNewAccessToken()
+                    .subscribe(() => {
+                        if (this.auth.isAccessTokenInvalid()) {
+                            this.router.navigate(['/login']);
+                            observer.next(false);
+                        } else {
+                            observer.next(true);
+                        }
+                        observer.complete();
+                    }, () => {
+                        observer.next(false);
+                        observer.complete();
+                    });
+            });
         } else if (route.routeConfig.path === 'login') {
             this.router.navigate(['/home']);
             return false;
@@ -37,4 +49,15 @@ export class FlyAuthGuard implements CanActivate {
         return true;
     }
 
+    canLoad(route: Route): Observable<boolean> | Promise<boolean> | boolean {
+        if (this.auth.isLogged()) {
+            this.auth.redirectUrl = null;
+            return true;
+        }
+
+        this.auth.redirectUrl = window.location.pathname;
+        this.router.navigate(['/login']);
+
+        return false;
+    }
 }

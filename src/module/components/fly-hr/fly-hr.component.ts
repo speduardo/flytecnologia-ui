@@ -1,6 +1,4 @@
-import {ChangeDetectionStrategy, Component, Input, OnInit, ViewEncapsulation} from '@angular/core';
-import {FlyUtilService} from '../../services/fly-util.service';
-import {FlyColspanInterface} from '../base/interface/fly-colspan.interface';
+import { ChangeDetectionStrategy, Component, Input, OnInit, ViewEncapsulation } from '@angular/core';
 
 @Component({
     selector: 'fly-hr',
@@ -9,23 +7,14 @@ import {FlyColspanInterface} from '../base/interface/fly-colspan.interface';
     encapsulation: ViewEncapsulation.None,
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class FlyHrComponent implements OnInit, FlyColspanInterface {
+export class FlyHrComponent implements OnInit {
 
     @Input() heading: string;
     @Input() iconClass: string;
-    @Input() colspan: string;
 
-    private colspanClass: string;
-
-    constructor(private flyUtilService: FlyUtilService) {
+    constructor() {
     }
 
     ngOnInit() {
-        this.defineClassColspan();
     }
-
-    defineClassColspan() {
-        this.colspanClass = this.flyUtilService.getColClass(this.colspan, 12);
-    }
-
 }

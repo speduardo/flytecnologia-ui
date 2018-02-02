@@ -1,14 +1,13 @@
-import {Injectable} from '@angular/core';
-import {HttpEvent, HttpHandler, HttpHeaders, HttpInterceptor, HttpRequest} from '@angular/common/http';
-import {Observable} from 'rxjs/Observable';
+import { Injectable } from '@angular/core';
+import { HttpEvent, HttpHandler, HttpHeaders, HttpInterceptor, HttpRequest } from '@angular/common/http';
+import { Observable } from 'rxjs/Observable';
 
-import {FlyTokenService} from './fly-token.service';
+import { FlyTokenService } from './fly-token.service';
+import { FlyAuthService } from './fly-auth.service';
 
 
 @Injectable()
 export class FlySecurityInterceptor implements HttpInterceptor {
-    auth: any;
-
     constructor() {
     }
 
@@ -31,6 +30,11 @@ export class FlySecurityInterceptor implements HttpInterceptor {
             headers = headers.append('Authorization', 'Bearer ' + token);
         }
 
+        if (!!FlyAuthService.clientId) {
+            headers = headers.append('cl', FlyAuthService.clientId);
+        }
+
+        // add cl nos parametros
         return next.handle(req.clone({headers}));
     }
 }

@@ -1,14 +1,12 @@
-import {EventEmitter, Input, OnInit, Output} from '@angular/core';
+import { EventEmitter, Input, OnInit, Output } from '@angular/core';
 
-import {FlyAbstractNgModel} from './fly-abstract-ng-model';
-import {FlyColspanInterface} from './interface/fly-colspan.interface';
-import {FlyUtilService} from '../../services/fly-util.service';
+import { FlyAbstractNgModel } from './fly-abstract-ng-model';
+import { FlyUtilService } from '../../services/fly-util.service';
 
-export abstract class FlyBaseInput extends FlyAbstractNgModel implements FlyColspanInterface, OnInit {
-    public classColspan: string;
+export abstract class FlyBaseInput extends FlyAbstractNgModel<any> implements OnInit {
     public hasFocus: boolean;
-    @Input() colspan: string;
 
+    @Input() name;
 
     @Output() focus: EventEmitter<Object> = new EventEmitter<Object>();
     @Output() blur: EventEmitter<Object> = new EventEmitter<Object>();
@@ -22,11 +20,9 @@ export abstract class FlyBaseInput extends FlyAbstractNgModel implements FlyCols
     }
 
     ngOnInit() {
-        this.defineClassColspan();
-    }
-
-    defineClassColspan() {
-        this.classColspan = this._flyUtilService.getColClass(this.colspan, 12);
+        if (!this.name) {
+            throw new Error('Attribute \'name\' is required');
+        }
     }
 
     _blur($event: any) {
@@ -47,11 +43,11 @@ export abstract class FlyBaseInput extends FlyAbstractNgModel implements FlyCols
         /*this.keydown.next($event);*/
     }
 
-    _change($event: any) {
+    public _change($event: any) {
         /*this.change.next($event);*/
     }
 
     _input($event: any) {
-        console.log($event.target);
+        //console.log($event.target);
     }
 }

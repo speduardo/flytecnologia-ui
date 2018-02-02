@@ -1,6 +1,4 @@
-import {Component, Input, OnInit, ViewEncapsulation} from '@angular/core';
-import {FlyUtilService} from '../../services/fly-util.service';
-import {FlyColspanInterface} from '../base/interface/fly-colspan.interface';
+import { Component, Input, OnInit, ViewEncapsulation } from '@angular/core';
 
 @Component({
     selector: 'fly-legend',
@@ -8,23 +6,14 @@ import {FlyColspanInterface} from '../base/interface/fly-colspan.interface';
     styleUrls: ['./fly-legend.component.scss'],
     encapsulation: ViewEncapsulation.None
 })
-export class FlyLegendComponent implements OnInit, FlyColspanInterface {
+export class FlyLegendComponent implements OnInit {
 
     @Input() heading: string;
     @Input() iconClass: string;
-    @Input() colspan: string;
 
-    private colspanClass: string;
-
-    constructor(private flyUtilService: FlyUtilService) {
+    constructor() {
     }
 
     ngOnInit() {
-        this.defineClassColspan();
     }
-
-    defineClassColspan() {
-        this.colspanClass = this.flyUtilService.getColClass(this.colspan, 12);
-    }
-
 }

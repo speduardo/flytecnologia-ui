@@ -1,49 +1,70 @@
-import {ControlValueAccessor} from '@angular/forms';
+import { ControlValueAccessor, NG_VALIDATORS, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { forwardRef, Input } from '@angular/core';
 
-export abstract class FlyAbstractNgModel implements ControlValueAccessor {
-    _value: any = '';
+/*
++------------------------------------+----------------------+
+|              Accessor              |     Form Element     |
++------------------------------------+----------------------+
+| DefaultValueAccessor               | input, textarea      |
+| CheckboxControlValueAccessor       | input[type=checkbox] |
+| NumberValueAccessor                | input[type=number]   |
+| RadioControlValueAccessor          | input[type=radio]    |
+| RangeValueAccessor                 | input[type=range]    |
+| SelectControlValueAccessor         | select               |
+| SelectMultipleControlValueAccessor | select[multiple]     |
+*/
+export abstract class FlyAbstractNgModel<T> implements ControlValueAccessor {
+    @Input() disabled = false;
+    private _value: T;
 
-    get value(): any {
+    // Function to call when the rating changes.
+    onChange(value: T): void {
+    }
+
+    // Function to call when the input is touched (when a star is clicked).
+    onTouched(): void {
+    }
+
+    get value(): T {
         return this._value;
     }
 
-    set value(v: any) {
-        this._value = v;
-        this.onChange(v);
+    set value(value: T) {
+        this._value = value;
+        this.onChange(value);
     }
 
-    writeValue(value: any) {
+    writeValue(value: T): void {
         this.value = value;
         /* warning: comment below if only want to emit on user intervention
         this.onChange(value);*/
     }
 
-    // Function to call when the rating changes.
-    onChange = (rating: number) => {
-    }
-
-    // Function to call when the input is touched (when a star is clicked).
-    onTouched = () => {
-    }
-
-    // Allows Angular to register a function to call when the model (rating) changes.
-    // Save the function as a property to call later here.
-    registerOnChange(fn: (rating: number) => void): void {
+    registerOnChange(fn: (value: T) => void): void {
         this.onChange = fn;
     }
 
-    // Allows Angular to register a function to call when the input has been touched.
-    // Save the function as a property to call later here.
     registerOnTouched(fn: () => void): void {
         this.onTouched = fn;
     }
+
+    setDisabledState(disabled: boolean): void {
+        this.disabled = disabled;
+    }
 }
 
-/*
-export function FlyMakeProviderNgModel(type: any) {
+export function ngModelProvider(type: any): any {
     return {
         provide: NG_VALUE_ACCESSOR,
         useExisting: forwardRef(() => type),
         multi: true
     };
-}*/
+}
+
+export function ngModelValidationProvider(type: any): any {
+    return {
+        provide: NG_VALIDATORS,
+        useExisting: forwardRef(() => type),
+        multi: true
+    };
+}

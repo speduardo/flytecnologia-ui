@@ -1,0 +1,73 @@
+<form novalidate #flyForm="ngForm"
+      class="fly-form">
+    <div *ngIf="!isDefaultValuesAvalilable">
+        Carregando...
+    </div>
+
+    <div *ngIf="isDefaultValuesAvalilable">
+        <div class="row">
+            <div class="col-md-12">
+                <h4 class="fly-header">
+                    <span class="fly-header-effect">{{ header }}</span>
+
+                    <button mat-fab color="primary"
+                            (click)="service.goToSearch()"
+                            class="float-right"
+                            type="button">
+                        <mat-icon aria-label="Search"
+                                  fontSet="fa"
+                                  fontIcon="fa-search"></mat-icon>
+                    </button>
+                </h4>
+                <div class="div-header-hr">
+                    <mat-progress-bar mode="indeterminate"
+                                      *ngIf="isDisabledButtons()">
+                    </mat-progress-bar>
+
+                    <hr class="sexy-colorgraph"
+                        *ngIf="!service?.isSearching">
+                </div>
+            </div>
+        </div>
+        <ng-content select="[body]">
+        </ng-content>
+
+
+        <!--form.form.valid {{ flyForm.form.valid }}
+
+        form.valid {{ flyForm.valid }}-->
+
+
+        <div class="row">
+            <div class="col-md-12">
+                <button mat-raised-button
+                        (click)="save()"
+                        color="primary"
+                        type="submit"
+                        [disabled]="isDisabledButtons() || !flyForm.form.valid">
+                    SALVAR
+                </button>
+
+                <button mat-raised-button
+                        (click)="service.clean()"
+                        [disabled]="isDisabledButtons()"
+                        type="reset">
+                    LIMPAR
+                </button>
+
+                <button mat-raised-button
+                        (click)="remove()"
+                        [disabled]="!service.entity.id || isDisabledButtons()"
+                        color="warn"
+                        type="button">
+                    EXCLUIR
+                </button>
+
+                <!--<span class="float-right"
+                      *ngIf="!!service.entity.id">
+                    Version: {{ service.entity.version }}
+                </span>-->
+            </div>
+        </div>
+    </div>
+</form>

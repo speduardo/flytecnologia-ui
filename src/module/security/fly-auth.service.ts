@@ -1,11 +1,15 @@
-import {Injectable} from '@angular/core';
-import {HttpClient, HttpHeaders} from '@angular/common/http';
-import {JwtHelper} from 'angular2-jwt';
+import { Injectable } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
-import {FlyConfigService} from '../services/fly-config.service';
+import { Observable } from 'rxjs/Observable';
+
+import { FlyConfigService } from '../confg/fly-config.service';
+import { FlyJwtService } from './fly-jwt.service';
 
 @Injectable()
 export class FlyAuthService {
+    redirectUrl: string;
+    static clientId: string;
     oauthTokenUrl: string;
     tokensRenokeUrl: string;
     jwtPayload: any;
@@ -13,15 +17,15 @@ export class FlyAuthService {
     header: HttpHeaders;
 
     constructor(private http: HttpClient,
-                private jwtHelper: JwtHelper,
-                private configService: FlyConfigService) {
-        this.oauthTokenUrl = `${configService.apiUrl}/oauth/token`;
-        this.tokensRenokeUrl = `${configService.apiUrl}/login/revoke`;
+                private jwtService: FlyJwtService,
+                private config: FlyConfigService) {
+        this.oauthTokenUrl = `${config.apiUrl}/oauth/token`;
+        this.tokensRenokeUrl = `${config.apiUrl}/login/revoke`;
         this.loadToken();
 
         this.header = new HttpHeaders({
             'Content-Type': 'application/x-www-form-urlencoded',
-            'Authorization': configService.authorizationBasicCode
+            'Authorization': config.authorizationBasicCode
         });
     }
 
@@ -29,83 +33,125 @@ export class FlyAuthService {
         return localStorage.getItem('token');
     }
 
-    logout(): Promise<void> {
-        const headers = new HttpHeaders({
-            'Authorization': 'Bearer ' + FlyAuthService.token()
-        });
-
-        return this.http.delete(this.tokensRenokeUrl, {headers, withCredentials: true})
-            .toPromise()
-            .then(() => {
-                this.cleanAccessToken();
+    logout(): Observable<void> {
+        return new Observable(observer => {
+            const headers = new HttpHeaders({
+                'Authorization': 'Bearer ' + FlyAuthService.token()
             });
-    }
 
-    login(username: string, password: string): Promise<void> {
-        const headers = this.header;
+            this.http.delete(this.tokensRenokeUrl, {headers, withCredentials: true})
+                .subscribe(
+                    () => {
+                        this.cleanAccessToken();
 
-        const body = `client=angular&username=${username}&password=${password}&grant_type=password`;
+                        observer.next();
+                        observer.complete();
+                    }, () => {
+                        this.cleanAccessToken();
 
-        return this.http.post(this.oauthTokenUrl, body, {headers, withCredentials: true})
-            .toPromise()
-            .then(response => {
-                this.saveToken(response['access_token']);
-            })
-            .catch(response => {
-                if (response.status === 400) {
-                    const responseJson = response.json();
-
-                    if (responseJson.error === 'invalid_grant') {
-                        return Promise.reject('Usuário ou password inválida!');
+                        observer.error();
+                        observer.complete();
                     }
-                }
-
-                return Promise.reject(response);
-            });
+                );
+        });
     }
 
-    getNewAccessToken(): Promise<void> {
-        const token = FlyAuthService.token();
+    login(username: string, password: string): Observable<any> {
+        return new Observable(observer => {
+            const headers = this.header;
 
-        if (!token) {
-            return Promise.resolve(null);
-        }
+            const body = `client=angular&username=${username}&password=${password}&grant_type=password`;
 
-        const headers = this.header;
-        const body = 'grant_type=refresh_token';
+            this.http.post(this.oauthTokenUrl, body, {headers, withCredentials: true})
+                .subscribe((response) => {
+                    this.saveToken(response['access_token']);
 
-        return this.http.post(this.oauthTokenUrl, body,
-            {headers, withCredentials: true})
-            .toPromise()
-            .then(response => {
-                this.saveToken(response['access_token']);
+                    observer.next(response);
+                    observer.complete();
+                }, (error) => {
+                    if (error.status === 400) {
+                        const responseJson = error.json();
 
-                console.log('Novo access token criado!');
+                        if (responseJson.error === 'invalid_grant') {
+                            observer.error('Usuário ou password inválida!');
+                        } else {
+                            observer.error(error);
+                        }
 
-                return Promise.resolve(null);
-            })
-            .catch(response => {
-                console.error('Erro ao renovar token.', response);
-                return Promise.resolve(null);
-            });
+                        observer.complete();
+                    }
+                });
+        });
+    }
+
+    getNewAccessToken(): Observable<any> {
+        return new Observable(observer => {
+            const token = FlyAuthService.token();
+
+            if (!token) {
+                observer.error();
+                observer.complete();
+            } else {
+                const headers = this.header;
+                const body = 'grant_type=refresh_token';
+
+                this.http.post(this.oauthTokenUrl, body,
+                    {headers, withCredentials: true})
+                    .subscribe(
+                        response => {
+                            this.saveToken(response['access_token']);
+
+                            console.log('Novo access token criado!');
+
+                            observer.next();
+                            observer.complete();
+                        },
+                        error => {
+                            observer.error(error);
+                            observer.complete();
+
+                            console.error('Erro ao renovar token.', error);
+                        });
+            }
+        });
     }
 
     cleanAccessToken() {
         localStorage.removeItem('token');
         this.jwtPayload = null;
+        FlyAuthService.clientId = null;
     }
 
-    isAccessTokenInvalid() {
+    isLogged(): boolean {
+        return this.jwtPayload != null && !this.isAccessTokenInvalid();
+    }
+
+    isAccessTokenInvalid(): boolean {
         const token = FlyAuthService.token();
 
-        return !token || this.jwtHelper.isTokenExpired(token);
+        if (!token) {
+            return true;
+        }
+
+        if (this.jwtPayload === null) {
+            this.saveToken(token);
+        }
+
+        return !token || this.jwtService.isTokenExpired(this.jwtPayload);
     }
 
-    hasPermission(permissao: string) {
+    hasPermission(permissao: string): boolean {
+        if (!this.config.production && !this.config.validatePermissionsInDebugMode) {
+            return true;
+        }
+
         return this.jwtPayload && this.jwtPayload.authorities.includes(permissao);
     }
 
-    hasAnyPermission(roles: Array<string>) {
+    hasAnyPermission(roles: Array<string>): boolean {
+        if (!this.config.production && !this.config.validatePermissionsInDebugMode) {
+            return true;
+        }
         for (const role of roles) {
             if (this.hasPermission(role)) {
                 return true;
@@ -115,9 +161,10 @@ export class FlyAuthService {
         return false;
     }
 
-    private saveToken(token: string) {
-        this.jwtPayload = this.jwtHelper.decodeToken(token);
+    private saveToken(token: string): void {
+        this.jwtPayload = this.jwtService.decodeToken(token);
         localStorage.setItem('token', token);
+        FlyAuthService.clientId = this.jwtPayload.cl;
     }
 
     private loadToken() {

@@ -1,4 +1,4 @@
-import {Component, Input, OnInit, ViewEncapsulation} from '@angular/core';
+import { Component, Input, OnInit, ViewEncapsulation } from '@angular/core';
 
 @Component({
     selector: 'fly-tab',
@@ -7,8 +7,6 @@ import {Component, Input, OnInit, ViewEncapsulation} from '@angular/core';
     encapsulation: ViewEncapsulation.None
 })
 export class FlyTabComponent implements OnInit {
-    private _active: boolean;
-
     @Input() lazy: boolean;
     @Input() required: boolean;
     @Input() heading: string;
@@ -18,8 +16,7 @@ export class FlyTabComponent implements OnInit {
     constructor() {
     }
 
-    ngOnInit() {
-    }
+    private _active: boolean;
 
     public get active() {
         return this._active;
@@ -27,5 +24,8 @@ export class FlyTabComponent implements OnInit {
 
     public set active(active) {
         this._active = active;
+    }
+
+    ngOnInit() {
     }
 }

@@ -1,6 +1,7 @@
 .fly-tabset {
     margin-top: 10px;
 }
+
 .fly-tabset-content {
     margin-bottom: 15px;
 }
@@ -14,7 +15,7 @@
     cursor: pointer;
 }
 
-.fly-tabset .disabled .fly-tabset-label-required{
+.fly-tabset .disabled .fly-tabset-label-required {
     text-decoration: line-through;
     color: #ff9937;
 }
@@ -35,8 +36,8 @@
 }
 
 .nav-tabs-light-blue .nav-tabs {
-    border-left: 6px solid #53CDE4 ;
-    border-right: 6px solid #53CDE4 ;
+    border-left: 6px solid #53CDE4;
+    border-right: 6px solid #53CDE4;
 }
 
 .nav-tabs-orange .nav-tabs {
