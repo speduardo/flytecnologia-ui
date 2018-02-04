@@ -21,17 +21,10 @@ export class FlyAuthGuard implements CanActivate, CanLoad {
         }
 
         if (this.auth.isAccessTokenInvalid()) {
-            console.log('Navegação com access token inválido. Obtendo novo token...');
-
             return new Observable(observer => {
                 this.auth.getNewAccessToken()
                     .subscribe(() => {
-                        if (this.auth.isAccessTokenInvalid()) {
-                            this.router.navigate(['/login']);
-                            observer.next(false);
-                        } else {
-                            observer.next(true);
-                        }
+                        observer.next(true);
                         observer.complete();
                     }, () => {
                         observer.next(false);

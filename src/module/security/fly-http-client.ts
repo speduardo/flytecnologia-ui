@@ -4,7 +4,6 @@ import { Observable } from 'rxjs/Observable';
 import './../confg/rxjs-operators.config';
 
 import { FlyAuthService } from './fly-auth.service';
-import { FlyNotAuthenticatedError } from './fly-not-authenticated-error';
 
 
 @Injectable()
@@ -44,29 +43,22 @@ export class FlyHttpClient {
 
     private checkToken(fn: Function): Observable<any> {
         if (this.auth.isAccessTokenInvalid()) {
-            console.log('Requisição HTTP com access token inválido. Obtendo novo token...');
 
             return new Observable(observer => {
                 this.auth.getNewAccessToken().subscribe(
                     () => {
-                        if (this.auth.isAccessTokenInvalid()) {
-                            throw new FlyNotAuthenticatedError();
-                        }
-
-                        console.log('getNewAccessToken');
-
                         fn().subscribe(
                             response => {
                                 observer.next(response);
                                 observer.complete();
-                            }, rejection => {
-                                observer.error(rejection);
+                            }, error => {
+                                observer.error(error);
                                 observer.complete();
                             }
                         );
-
-                    }, () => {
-                        throw new FlyNotAuthenticatedError();
+                    }, (error) => {
+                        observer.error(error);
+                        observer.complete();
                     }
                 );
             });

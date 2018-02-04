@@ -10,13 +10,12 @@ import {
     MatProgressBarModule,
     MatRadioModule,
     MatSidenavModule,
-    MatTableModule,
     MatToolbarModule
 } from '@angular/material';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 
-import { DataTableModule, SharedModule } from 'primeng/primeng';
+import { TableModule } from 'primeng/table';
 
 import { PaginationModule } from 'ngx-bootstrap/pagination';
 
@@ -55,6 +54,7 @@ import { FlyInputRadioComponent } from './components/fly-input-radio/fly-input-r
 import { FlyInputCheckboxComponent } from './components/fly-input-checkbox/fly-input-checkbox.component';
 import { FlyInputDateComponent } from './components/fly-input-date/fly-input-date.component';
 import { FlyInputUploadComponent } from './components/fly-input-upload/fly-input-upload.component';
+import { FlyModalService } from './services/fly-modal.service';
 
 export * from './components/base/fly-abstract-ng-model';
 export * from './components/base/fly-base-input';
@@ -91,6 +91,7 @@ export * from './services/fly.service';
 export * from './services/fly-util.service';
 export * from './services/fly-alert.service';
 export * from './services/fly-app.service';
+export * from './services/fly-modal.service';
 
 export * from './provider/fly-error-handler';
 
@@ -124,13 +125,11 @@ export * from './security/fly-jwt.service';
         MatIconModule,
         MatRadioModule,
         MatCheckboxModule,
-        DataTableModule,
-        SharedModule,
+        TableModule,
         PaginationModule.forRoot(),
         FlySecurityModule
     ],
     declarations: [
-        FlyInputTextComponent,
         FlyLegendComponent,
         FlyHrComponent,
         FlyTabsetComponent,
@@ -148,6 +147,7 @@ export * from './security/fly-jwt.service';
         FlyFormReportComponent,
         FlyFormProcessingComponent,
         FlyControlbarComponent,
+        FlyInputTextComponent,
         FlyInputAreaComponent,
         FlyInputSelectComponent,
         FlyInputRadioComponent,
@@ -165,15 +165,12 @@ export * from './security/fly-jwt.service';
         MatIconModule,
         MatSidenavModule,
         MatDialogModule,
-        MatTableModule,
         MatProgressBarModule,
         MatIconModule,
         MatRadioModule,
         MatCheckboxModule,
-        DataTableModule,
-        SharedModule,
+        TableModule,
         PaginationModule,
-        FlyInputTextComponent,
         FlyLegendComponent,
         FlyHrComponent,
         FlyTabsetComponent,
@@ -191,6 +188,7 @@ export * from './security/fly-jwt.service';
         FlyFormReportComponent,
         FlyFormProcessingComponent,
         FlyControlbarComponent,
+        FlyInputTextComponent,
         FlyInputAreaComponent,
         FlyInputSelectComponent,
         FlyInputRadioComponent,
@@ -228,7 +226,8 @@ export class FlytecnologiaUiModule {
                 FlyConfigService,
                 FlyAppService,
                 FlyAppModuleConfigService,
-                FlyIconConfig
+                FlyIconConfig,
+                FlyModalService
             ]
         };
     }

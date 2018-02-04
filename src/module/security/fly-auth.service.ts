@@ -5,6 +5,7 @@ import { Observable } from 'rxjs/Observable';
 
 import { FlyConfigService } from '../confg/fly-config.service';
 import { FlyJwtService } from './fly-jwt.service';
+import { FlyNotAuthenticatedError } from './fly-not-authenticated-error';
 
 @Injectable()
 export class FlyAuthService {
@@ -18,7 +19,7 @@ export class FlyAuthService {
 
     constructor(private http: HttpClient,
                 private jwtService: FlyJwtService,
-                private config: FlyConfigService) {
+                public config: FlyConfigService) {
         this.oauthTokenUrl = `${config.apiUrl}/oauth/token`;
         this.tokensRenokeUrl = `${config.apiUrl}/login/revoke`;
         this.loadToken();
@@ -95,13 +96,23 @@ export class FlyAuthService {
                 const headers = this.header;
                 const body = 'grant_type=refresh_token';
 
+                if (!this.config.production) {
+                    console.log('Getting a new token...');
+                }
+
                 this.http.post(this.oauthTokenUrl, body,
                     {headers, withCredentials: true})
                     .subscribe(
                         response => {
                             this.saveToken(response['access_token']);
 
-                            console.log('Novo access token criado!');
+                            if (this.isAccessTokenInvalid(response['access_token'])) {
+                                throw new FlyNotAuthenticatedError();
+                            }
+
+                            if (!this.config.production) {
+                                console.log('Created a new access token!');
+                            }
 
                             observer.next();
                             observer.complete();
@@ -110,7 +121,11 @@ export class FlyAuthService {
                             observer.error(error);
                             observer.complete();
 
-                            console.error('Erro ao renovar token.', error);
+                            if (!this.config.production) {
+                                console.error('Error renewing access token.', error);
+                            }
+
+                            throw new FlyNotAuthenticatedError();
                         });
             }
         });
@@ -126,8 +141,8 @@ export class FlyAuthService {
         return this.jwtPayload != null && !this.isAccessTokenInvalid();
     }
 
-    isAccessTokenInvalid(): boolean {
-        const token = FlyAuthService.token();
+    isAccessTokenInvalid(accessToken: string = null): boolean {
+        const token = accessToken || FlyAuthService.token();
 
         if (!token) {
             return true;

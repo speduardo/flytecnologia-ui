@@ -99,3 +99,13 @@ label {
     -moz-box-shadow: 0 0 6px #f8b9b7;
     box-shadow: 0 0 6px #f8b9b7;
 }
+
+/* Small Devices, Tablets */
+@media only screen and (max-width: 768px) {
+
+    .mat-raised-button {
+        width: 100%;
+        margin-top: 5px !important;
+        margin-bottom: 5px !important;
+    }
+}

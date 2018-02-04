@@ -3,6 +3,7 @@ import { ElementRef } from '@angular/core';
 import { HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 import { Router } from '@angular/router';
+import { MatDialog } from '@angular/material';
 
 import './../confg/rxjs-operators.config';
 
@@ -12,6 +13,7 @@ import { FlyEntity } from './entity/fly-entity';
 import { FlyFilter } from './filter/fly-filter';
 import { FlyGridComponent } from '../components/fly-grid/fly-grid.component';
 import { FlyAlertService } from './fly-alert.service';
+import { FlyModalCrudData, FlyModalRef } from './fly-modal.service';
 
 export abstract class FlyService<T extends FlyEntity, F extends FlyFilter> {
     controller: string;
@@ -43,6 +45,12 @@ export abstract class FlyService<T extends FlyEntity, F extends FlyFilter> {
     methodNameDefaultValuesSearch = 'defaultValuesSearch';
     methodNameAutocomplete = 'autocomplete';
 
+    crudFormComponent: any;
+
+    gridMasterService: FlyService<any, any>;
+    masterService: FlyService<any, any>;
+    modalCrudRef: FlyModalRef;
+    matDialogService: MatDialog;
     form: NgForm;
 
     constructor(protected http: FlyHttpClient,
@@ -60,6 +68,10 @@ export abstract class FlyService<T extends FlyEntity, F extends FlyFilter> {
 
     beforeSave(): boolean {
         return true;
+    }
+
+    onInitForm(): void {
+
     }
 
     afterSave(): void {
@@ -280,8 +292,11 @@ export abstract class FlyService<T extends FlyEntity, F extends FlyFilter> {
         this.cleanEntity();
         this.cleanFilter();
         this.resetForm();
+
         if (this.isFormCrud) {
             this.goToNew();
+        } else {
+            this.onInitForm();
         }
     }
 
@@ -325,6 +340,12 @@ export abstract class FlyService<T extends FlyEntity, F extends FlyFilter> {
         this.filter.size = this.itemsPerPage;
     }
 
+    searchAll(filter: FlyFilter = this.getFilter()): Observable<any[]> {
+        filter.page = 99999999;
+
+        return this.search(filter);
+    }
+
     search(filter: FlyFilter = this.getFilter()): Observable<any[]> {
         filter.size = this.itemsPerPage;
 
@@ -332,7 +353,7 @@ export abstract class FlyService<T extends FlyEntity, F extends FlyFilter> {
 
         const props = Object.getOwnPropertyNames(filter);
 
-        const page = filter.page > 0 ? (filter.page - 1) : 0;
+        const page = filter.page !== -1 ? (filter.page > 0 ? (filter.page - 1) : 0) : -1;
 
         props.forEach(function (prop) {
             if (prop === 'page') {
@@ -408,6 +429,37 @@ export abstract class FlyService<T extends FlyEntity, F extends FlyFilter> {
 
     editRecord(id: number) {
         this.config.router.navigate([this.config.appService.appModule + '/' + this.urlRouter, id]);
+    }
+
+    openPopupCrudForm(id: number = null): void {
+        const data: FlyModalCrudData = {
+            id: id,
+            gridService: this
+        };
+
+        const dialogRef: FlyModalRef = this.matDialogService.open(this.crudFormComponent, {
+                width: '800px',
+                data: data
+            })
+        ;
+
+        /* const dialogRef: FlyModalRef = this.modalService.open(this.service.crudFormComponent, {
+             id: id,
+             gridService: this.service
+         });*/
+
+        dialogRef.afterClosed().subscribe((result) => {
+            return result;
+        });
+
+        this.modalCrudRef = dialogRef;
+    }
+
+    closeModal(): void {
+        if (this.modalCrudRef) {
+            this.modalCrudRef.close();
+            this.modalCrudRef = null;
+        }
     }
 
     addColumn(column) {

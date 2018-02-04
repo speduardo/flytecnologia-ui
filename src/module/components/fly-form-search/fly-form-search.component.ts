@@ -24,6 +24,7 @@ export class FlyFormSearchComponent extends FlyFormService implements OnInit, Af
 
                 setTimeout(() => {
                     this.service.form = this.flyForm;
+                    this.service.onInitForm();
                 });
             });
     }

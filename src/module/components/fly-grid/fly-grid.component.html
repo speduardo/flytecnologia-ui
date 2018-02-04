@@ -1,40 +1,103 @@
 <div>
     <ng-content select="[header]"></ng-content>
 
-    <p-dataTable
+    <p-table
         #flyGridElement
         [value]="service.provider"
         [responsive]="true"
         [selectionMode]="selectionMode"
-        [resizableColumns]="true">
-        <p-header *ngIf="!!header">{{ header }}</p-header>
-        <p-column
-            *ngFor="let col of service.columns"
-            [field]="col.field"
-            [header]="col.header"
-            [style]="col.style"
-            [sortable]="col.sortable">
-            <ng-template
-                pTemplate="header"
-                *ngIf="!!col.headerTemplate">
-                <div [innerHTML]="col.headerTemplate"></div>
-            </ng-template>
-            <ng-template let-row="rowData"
-                         pTemplate="body"
-                         *ngIf="!!col.isButton">
-                <button mat-icon-button
-                        color="primary"
-                        (click)="col.click(service, row)"
-                        type="button">
-                    <mat-icon aria-label="Edit"
-                              fontSet="fa"
-                              fontIcon="fa-edit fa-2x"></mat-icon>
-                </button>
-            </ng-template>
-        </p-column>
-        <p-footer>
-            <div class="row margin-zero padding-zero">
-                <div class="col-md-9 padding-zero">
+        [resizableColumns]="true"
+        columnResizeMode="expand"
+        [(selection)]="service.selectedItem"
+        [scrollable]="true"
+        [scrollHeight]="gridHeight"
+        [loading]="service.isSearching"
+    >
+        <ng-template pTemplate="caption"
+                     *ngIf="!!header">
+            {{ header }}
+        </ng-template>
+        <ng-template pTemplate="colgroup" let-columns>
+            <colgroup>
+                <col style="width: 2.25em"
+                     *ngIf="selectionMode==='multiple'">
+                <col *ngFor="let col of service.columns"
+                     [ngStyle]="col.style">
+            </colgroup>
+        </ng-template>
+        <ng-template pTemplate="header" let-columns>
+            <tr>
+                <th *ngIf="selectionMode==='multiple'">
+                    <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                </th>
+                <th *ngFor="let col of service.columns"
+                    [pSortableColumn]="col.field">
+                    <ng-container
+                        *ngTemplateOutlet="col.headerTemplate ? col.headerTemplate: flyGridHeaderTemplate">
+                    </ng-container>
+
+                    <ng-template #flyGridHeaderTemplate>
+                        {{col.header}}
+                    </ng-template>
+                </th>
+            </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-rowData let-columns="columns">
+            <tr>
+                <td *ngIf="selectionMode==='multiple'">
+                    <p-tableCheckbox [value]="rowData"></p-tableCheckbox>
+                </td>
+                <td *ngFor="let col of service.columns"
+                    [style]="col.style">
+
+                    <ng-container
+                        *ngTemplateOutlet="col.cellTemplate ? col.cellTemplate: flyGridCellTemplate;
+                        context: {col: col, row: rowData}">
+                    </ng-container>
+
+                    <ng-template #flyGridCellTemplate>
+                        <label>{{rowData[col?.field]}}</label>
+                    </ng-template>
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="footer"
+                     let-columns
+                     *ngIf="showFooter">
+            <tr>
+                <td *ngFor="let col of service.columns">
+                    <ng-container
+                        *ngTemplateOutlet="col.footerTemplate ? col.footerTemplate: flyGridFooterTemplate">
+                    </ng-container>
+
+                    <ng-template #flyGridFooterTemplate>
+                        {{col?.footer}}
+                    </ng-template>
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage" let-columns>
+            <tr class="fly-grid-any-record">
+                <td [attr.colspan]="service.columns.length"
+                    class="fly-grid-any-record">
+                    {{ msgAnyRecord }}
+                </td>
+            </tr>
+        </ng-template>
+
+        <ng-template pTemplate="summary">
+
+            <div class="row margin-zero padding-zero fly-grid-footer-pagination">
+                <div class="col-md-9 padding-zero text-left">
+                    <button mat-raised-button
+                            (click)="service.openPopupCrudForm()"
+                            color="primary"
+                            type="button"
+                            [disabled]="service.isSearching"
+                            *ngIf="showAddButton">
+                        {{ labelAddButton }}
+                    </button>
                     <pagination
                         [totalItems]="service.totalElements"
                         [(ngModel)]="service.filter.page"
@@ -54,18 +117,46 @@
                     >
                     </pagination>
                 </div>
-                <div class="col-md-3 padding-zero float-right">
+                <div class="col-md-3 padding-zero float-right text-right"
+                     *ngIf="service.totalPages > 1;  else juntOnePageGrid">
                     Página {{ service.filter.page }} / {{ service.totalPages }} - Reg: {{ service.totalElements }}
                 </div>
+                <ng-template #juntOnePageGrid>
+                    <div class="col-md-3 padding-zero float-right text-right">
+                        Reg: {{ service.totalElements }}
+                    </div>
+                </ng-template>
             </div>
+
+            <ng-content select="[footer]"></ng-content>
+
             <mat-progress-bar mode="indeterminate"
                               *ngIf="service.isSearching && service.showProgressbarGrid !== false">
             </mat-progress-bar>
-        </p-footer>
 
-    </p-dataTable>
+        </ng-template>
 
-    <ng-content select="[footer]"></ng-content>
+    </p-table>
 
+    <ng-template #flyGridCellEditButtonTemplate
+                 let-col="col"
+                 let-row="row">
+        <button class="btn btn-primary btn-sm"
+                (click)="col.click(service, row)"
+                type="button">
 
+            <i class="fa fa-edit"></i>
+        </button>
+    </ng-template>
+
+    <ng-template #flyGridCellRemoveButtonTemplate
+                 let-col="col"
+                 let-row="row">
+        <button class="btn btn-danger btn-sm"
+                (click)="col.click(service, row)"
+                type="button">
+
+            <i class="fa fa-trash"></i>
+        </button>
+    </ng-template>
 </div>
