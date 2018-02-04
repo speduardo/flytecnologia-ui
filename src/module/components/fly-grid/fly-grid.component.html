@@ -78,9 +78,10 @@
             </tr>
         </ng-template>
         <ng-template pTemplate="emptymessage" let-columns>
-            <tr class="fly-grid-any-record">
+            <tr>
                 <td [attr.colspan]="service.columns.length"
-                    class="fly-grid-any-record">
+                    class="fly-grid-any-record"
+                    [ngStyle]="{'height': gridHeight}">
                     {{ msgAnyRecord }}
                 </td>
             </tr>
@@ -113,12 +114,12 @@
                         (numPages)="smallnumPages = $event"
                         (click)="search()"
                         [disabled]="service.isSearching"
-                        *ngIf="service.totalPages > 1"
+                        *ngIf="service.totalPages > 1 && showPagination"
                     >
                     </pagination>
                 </div>
                 <div class="col-md-3 padding-zero float-right text-right"
-                     *ngIf="service.totalPages > 1;  else juntOnePageGrid">
+                     *ngIf="service.totalPages > 1 && showPagination;  else juntOnePageGrid">
                     Página {{ service.filter.page }} / {{ service.totalPages }} - Reg: {{ service.totalElements }}
                 </div>
                 <ng-template #juntOnePageGrid>

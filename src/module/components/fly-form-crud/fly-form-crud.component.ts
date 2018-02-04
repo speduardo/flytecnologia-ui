@@ -17,7 +17,14 @@ import { FlyModalCrudData } from '../../services/fly-modal.service';
 export class FlyFormCrudComponent extends FlyFormService implements OnInit, OnDestroy, AfterViewInit {
     idSubscription: Subscription;
 
+    labelSaveButton = 'SALVAR';
+    labelResetButton = 'LIMPAR';
+    labelRemoveButton = 'EXCLUIR';
+    labelSaveAndCloseButton = ' E FECHAR';
+    labelSaveAndCleanButton = ' E LIMPAR';
+
     @Input() header: string;
+
 
     constructor(private route: ActivatedRoute,
                 private router: Router,
@@ -37,8 +44,18 @@ export class FlyFormCrudComponent extends FlyFormService implements OnInit, OnDe
             });
         }
 
-        this.service.gridMasterService = this.modalCrudData ? this.modalCrudData.gridService : null;
         this.service.isFormCrud = true;
+
+        this.service.gridMasterService = this.modalCrudData ? this.modalCrudData.gridService : null;
+        this.service.isPopup = !!this.service.gridMasterService;
+
+        if (this.service.isPopup) {
+            this.service.modalCrudRef = this.service.gridMasterService.modalCrudRef;
+
+            if (!this.service.gridMasterService.masterService.entity.id) {
+                this.labelSaveButton = 'ADICIONAR';
+            }
+        }
 
         this.service.loadDefaultValuesCrud().subscribe(
             () => {
@@ -59,17 +76,6 @@ export class FlyFormCrudComponent extends FlyFormService implements OnInit, OnDe
         if (this.idSubscription) {
             this.idSubscription.unsubscribe();
         }
-    }
-
-    save(): void {
-        this.service.save(true, true).subscribe();
-    }
-
-    remove(): void {
-        this.service.remove(this.service.entity.id).subscribe(() => {
-            this.alertService.success('Registro excluido com sucesso!');
-            this.service.goToNew();
-        });
     }
 
     isDisabledButtons(): boolean {

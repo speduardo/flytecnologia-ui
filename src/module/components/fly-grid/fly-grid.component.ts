@@ -2,7 +2,6 @@ import { Component, ElementRef, Input, OnInit, TemplateRef, ViewChild, ViewEncap
 import { MatDialog } from '@angular/material';
 
 import { FlyService } from '../../services/fly.service';
-import { FlyModalService } from '../../services/fly-modal.service';
 
 @Component({
     selector: 'fly-grid',
@@ -12,11 +11,12 @@ import { FlyModalService } from '../../services/fly-modal.service';
 })
 export class FlyGridComponent implements OnInit {
     smallnumPages = 0;
+    selectionMode = 'single';
 
     @Input() service: FlyService<any, any>;
     @Input() masterService: FlyService<any, any>;
 
-    @Input() selectionMode = 'single';
+    @Input() multiSelect = false;
 
     @Input() header: string;
 
@@ -25,30 +25,34 @@ export class FlyGridComponent implements OnInit {
     @Input() showEditButton = false;
     @Input() showAddButton = false;
     @Input() showRemoveButton = false;
+    @Input() showPagination = false;
 
     @Input() watch = [];
     @Input() watchNonRequired = [];
 
-    @Input() gridHeight = '300px';
+    @Input() gridHeight = '250px';
     @Input() labelAddButton = 'ADICIONAR';
     @Input() msgAnyRecord = 'Nenhum registro';
 
     @ViewChild('flyGridElement') flyGridElement: ElementRef;
 
     @ViewChild('flyGridHeaderTemplate')
-    public flyGridHeaderTemplate: TemplateRef<any>;
+     flyGridHeaderTemplate: TemplateRef<any>;
 
     @ViewChild('flyGridCellTemplate')
-    public flyGridCellTemplate: TemplateRef<any>;
+    flyGridCellTemplate: TemplateRef<any>;
 
     @ViewChild('flyGridCellEditButtonTemplate')
-    public flyGridCellEditButtonTemplate: TemplateRef<any>;
+    flyGridCellEditButtonTemplate: TemplateRef<any>;
 
     @ViewChild('flyGridCellRemoveButtonTemplate')
-    public flyGridCellRemoveButtonTemplate: TemplateRef<any>;
+    flyGridCellRemoveButtonTemplate: TemplateRef<any>;
 
-    constructor(public modalService: FlyModalService,
-                private dialog: MatDialog) {
+    constructor(private dialog: MatDialog) {
+
+        if (this.multiSelect === true) {
+            this.selectionMode = 'multiple';
+        }
     }
 
     ngOnInit() {
@@ -64,7 +68,15 @@ export class FlyGridComponent implements OnInit {
     }
 
     configServiceGrid() {
-        this.service.masterService = this.masterService;
+        if (this.masterService) {
+            /*all crud grids*/
+            this.masterService.listNameEntityMasterPropertyList.push(this.service.entityMasterPropertyList);
+            this.service.masterService = this.masterService;
+            this.masterService.cleanEvent.subscribe(
+                () => this.clean()
+            );
+        }
+        this.service.showAllRecordsOnSearch = this.showPagination === false;
         this.service.matDialogService = this.dialog;
         this.service.gridScope = this;
         this.service.flyGridElement = this.flyGridElement;
@@ -104,31 +116,20 @@ export class FlyGridComponent implements OnInit {
             style: {'width': '55px'},
             isButton: true,
             cellTemplate: this.flyGridCellRemoveButtonTemplate,
-            click: this.onRemove
+            click: this.$gridRemove
         });
     }
 
     onEdit(service, data) {
-        if (!!data && data.id) {
-
-            if (service.masterService) {
-                service.openPopupCrudForm(data.id);
-            } else {
-                service.editRecord(Number(data.id));
-            }
-        }
+        service.$gridEdit(data);
     }
 
-    onRemove(service, data) {
-        if (!!data && data.id) {
-            service.remove(Number(data.id)).subscribe(
-                () => service.search().subscribe()
-            );
-        }
+    $gridRemove(service, data) {
+        service.$gridRemove(data);
     }
 
     search(): void {
-        this.service.search(this.service.getFilter()).subscribe();
+        this.service.search().subscribe();
     }
 
     clean(): void {
@@ -136,48 +137,5 @@ export class FlyGridComponent implements OnInit {
     }
 
     pageChanged(event: any): void {
-        /* console.log('Page changed to: ' + event.page);
-         console.log('Number items per page: ' + event.itemsPerPage);*/
     }
-
-    /*
-    openCrudForm(id: number = null): void {
-        const data: FlyModalCrudData = {
-            id: id,
-            gridService: this.service
-        };
-
-        const dialogRef: FlyModalRef = this.dialog.open(this.service.crudFormComponent, {
-                width: '800px',
-                data: data
-            })
-        ;
-
-        const dialogRef: FlyModalRef = this.modalService.open(this.service.crudFormComponent, {
-            id: id,
-            gridService: this.service
-        });
-
-        dialogRef
-            .afterClosed()
-
-            .subscribe(
-                (result) => {
-                    this.onClosePopup();
-
-                    return result;
-                }
-            )
-        ;
-
-        this.service.modalCrudRef = dialogRef;
-    }*/
-
-    closeModal(): void {
-        this.service.closeModal();
-    }
-
-    onClosePopup(): void {
-    }
-
 }

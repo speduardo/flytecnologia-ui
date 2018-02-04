@@ -1,5 +1,5 @@
 import { NgForm } from '@angular/forms';
-import { ElementRef } from '@angular/core';
+import { ElementRef, EventEmitter } from '@angular/core';
 import { HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 import { Router } from '@angular/router';
@@ -18,7 +18,7 @@ import { FlyModalCrudData, FlyModalRef } from './fly-modal.service';
 export abstract class FlyService<T extends FlyEntity, F extends FlyFilter> {
     controller: string;
     filter: F;
-    entity: T;
+    _entity: T;
     parameters: any = {};
     itemsPerPage = 10;
     totalElements = 0;
@@ -44,7 +44,6 @@ export abstract class FlyService<T extends FlyEntity, F extends FlyFilter> {
     methodNameDefaultValuesCrud = 'defaultValuesCrud';
     methodNameDefaultValuesSearch = 'defaultValuesSearch';
     methodNameAutocomplete = 'autocomplete';
-
     crudFormComponent: any;
 
     gridMasterService: FlyService<any, any>;
@@ -53,9 +52,30 @@ export abstract class FlyService<T extends FlyEntity, F extends FlyFilter> {
     matDialogService: MatDialog;
     form: NgForm;
 
+    entityMasterPropertyList: string;
+    entityDetailPropertyObject: string;
+    listNameEntityMasterPropertyList = [];
+    cleanEvent: EventEmitter<any> = new EventEmitter();
+
+    showAllRecordsOnSearch = false;
+
+    private _entityEmpty: T;
+
     constructor(protected http: FlyHttpClient,
                 protected config: FlyConfigService,
                 protected router: Router) {
+    }
+
+    get entity(): T {
+        return this._entity;
+    }
+
+    set entity(value: T) {
+        this._entity = value;
+
+        if (value && !this._entityEmpty) {
+            this._entityEmpty = value;
+        }
     }
 
     getUrlBase(): string {
@@ -80,7 +100,7 @@ export abstract class FlyService<T extends FlyEntity, F extends FlyFilter> {
     findResult(): void {
     }
 
-    create(): Observable<FlyEntity> {
+    create(): Observable<T> {
         return new Observable(observer => {
             this.isSaving = true;
 
@@ -90,6 +110,8 @@ export abstract class FlyService<T extends FlyEntity, F extends FlyFilter> {
                 observer.error();
                 observer.complete();
             } else {
+                this.addMasterEntityInDetailEntity();
+
                 const entity = {
                     entity: this.entity,
                     parameters: this.parameters
@@ -112,7 +134,21 @@ export abstract class FlyService<T extends FlyEntity, F extends FlyFilter> {
         });
     }
 
-    update(): Observable<FlyEntity> {
+
+    /*If the entity is saved, so the persist lists is not sending with the entity. */
+    private removePersistDetailItensFromEntitySaved() {
+        if (!this.entity.id || this.listNameEntityMasterPropertyList.length === 0) {
+            return;
+        }
+
+        this.listNameEntityMasterPropertyList.forEach((value) => {
+            if (this.entity[value]) {
+                this.entity[value] = [];
+            }
+        });
+    }
+
+    update(): Observable<T> {
         return new Observable(observer => {
             this.isSaving = true;
 
@@ -122,6 +158,10 @@ export abstract class FlyService<T extends FlyEntity, F extends FlyFilter> {
                 observer.error();
                 observer.complete();
             } else {
+                this.removePersistDetailItensFromEntitySaved();
+
+                this.addMasterEntityInDetailEntity();
+
                 const entity = {
                     entity: this.entity,
                     parameters: this.parameters
@@ -146,14 +186,78 @@ export abstract class FlyService<T extends FlyEntity, F extends FlyFilter> {
         });
     }
 
-    save(showMessage: boolean = false, goToEditPage: boolean = false): Observable<FlyEntity> {
+    private addMasterEntityInDetailEntity(): void {
+        if (!this.isPopup || !this.gridMasterService ||
+            !this.gridMasterService.masterService) {
+            return;
+        }
+
+        if (this.gridMasterService.masterService.entity.id) {
+            this.entity[this.gridMasterService.entityDetailPropertyObject] =
+                this.gridMasterService.masterService.entity;
+        }
+    }
+
+    searchGridCrud(): void {
+        if (!this.isPopup || !this.gridMasterService ||
+            !this.gridMasterService.masterService) {
+            return;
+        }
+
+        if (!this.gridMasterService.masterService.entity.id) {
+            this.gridMasterService.provider = this.gridMasterService.masterService.entity[
+                this.gridMasterService.entityMasterPropertyList];
+        } else {
+            this.gridMasterService.search().subscribe();
+        }
+    }
+
+    save(showMessage: boolean = false, goToEditPage: boolean = false): Observable<T> {
         return new Observable(observer => {
-            if (this.entity.id) {
+            if (this.isPopup && this.gridMasterService &&
+                this.gridMasterService.masterService &&
+                !this.gridMasterService.masterService.entity.id) {
+
+                this.isSaving = true;
+
+                if (!this.gridMasterService.entityMasterPropertyList) {
+                    console.error('Has no value to entityMasterPropertyList');
+                }
+
+                if (!this.gridMasterService.entityDetailPropertyObject) {
+                    console.error('Has no value to entityDetailPropertyObject');
+                }
+
+                if (!this.gridMasterService.masterService.entity[
+                        this.gridMasterService.entityMasterPropertyList]) {
+                    this.gridMasterService.masterService.entity[
+                        this.gridMasterService.entityMasterPropertyList] = [];
+                }
+
+                this.entity[this.gridMasterService.entityDetailPropertyObject] = null;
+
+                const indexOfEntity = this.gridMasterService.masterService.entity[
+                    this.gridMasterService.entityMasterPropertyList].indexOf(this.entity);
+
+                if (indexOfEntity === -1) {
+                    this.gridMasterService.masterService.entity[
+                        this.gridMasterService.entityMasterPropertyList].push(this.entity);
+                }
+
+                this.searchGridCrud();
+
+                this.isSaving = false;
+
+                observer.next(this.entity);
+                observer.complete();
+            } else if (this.entity.id) {
                 this.update().subscribe(
                     (response) => {
                         if (showMessage) {
                             this.getAlertService().success('Registro atualizado com sucesso!');
                         }
+
+                        this.searchGridCrud();
 
                         observer.next(response);
                         observer.complete();
@@ -164,8 +268,7 @@ export abstract class FlyService<T extends FlyEntity, F extends FlyFilter> {
                 );
             } else {
                 this.create()
-                    .subscribe(
-                        (response) => {
+                    .subscribe((response) => {
 
                             if (showMessage) {
                                 this.getAlertService().success('Registro criado com sucesso!');
@@ -173,6 +276,12 @@ export abstract class FlyService<T extends FlyEntity, F extends FlyFilter> {
 
                             if (goToEditPage) {
                                 this.goToEdit(response.id);
+                            } else {
+                                this.entity = response;
+
+                                if (this.isPopup) {
+                                    this.searchGridCrud();
+                                }
                             }
 
                             observer.next(response);
@@ -183,6 +292,8 @@ export abstract class FlyService<T extends FlyEntity, F extends FlyFilter> {
                         }
                     );
             }
+
+
         });
     }
 
@@ -220,7 +331,7 @@ export abstract class FlyService<T extends FlyEntity, F extends FlyFilter> {
         });
     }
 
-    findById(id: number = this.entity.id): Observable<FlyEntity> {
+    findById(id: number = this.entity.id): Observable<T> {
         return new Observable(observer => {
             this.isSearching = true;
 
@@ -293,7 +404,11 @@ export abstract class FlyService<T extends FlyEntity, F extends FlyFilter> {
         this.cleanFilter();
         this.resetForm();
 
-        if (this.isFormCrud) {
+        this.provider = [];
+
+        this.cleanEvent.emit();
+
+        if (this.isFormCrud && !this.isPopup) {
             this.goToNew();
         } else {
             this.onInitForm();
@@ -315,13 +430,21 @@ export abstract class FlyService<T extends FlyEntity, F extends FlyFilter> {
             return;
         }
 
-        const props = Object.getOwnPropertyNames(this.entity);
+        /*const props = Object.getOwnPropertyNames(this.entity);
 
         const self = this;
 
         props.forEach(function (prop) {
-            self.entity[prop] = null;
-        });
+            if (self.entity[prop] && self.entity[prop] instanceof FlyEntityImpl) {
+                self.entity[prop] = {};
+            } else {
+                self.entity[prop] = null;
+            }
+
+        });*/
+
+        this.entity = Object.create(this._entityEmpty);
+
     }
 
     cleanFilter(): void {
@@ -347,6 +470,10 @@ export abstract class FlyService<T extends FlyEntity, F extends FlyFilter> {
     }
 
     search(filter: FlyFilter = this.getFilter()): Observable<any[]> {
+        if (this.showAllRecordsOnSearch) {
+            filter.page = 99999999;
+        }
+
         filter.size = this.itemsPerPage;
 
         let params = new HttpParams();
@@ -437,10 +564,10 @@ export abstract class FlyService<T extends FlyEntity, F extends FlyFilter> {
             gridService: this
         };
 
-        const dialogRef: FlyModalRef = this.matDialogService.open(this.crudFormComponent, {
-                width: '800px',
-                data: data
-            })
+        this.modalCrudRef = this.matDialogService.open(this.crudFormComponent, {
+            width: '800px',
+            data: data
+        })
         ;
 
         /* const dialogRef: FlyModalRef = this.modalService.open(this.service.crudFormComponent, {
@@ -448,14 +575,12 @@ export abstract class FlyService<T extends FlyEntity, F extends FlyFilter> {
              gridService: this.service
          });*/
 
-        dialogRef.afterClosed().subscribe((result) => {
+        this.modalCrudRef.afterClosed().subscribe((result) => {
             return result;
         });
-
-        this.modalCrudRef = dialogRef;
     }
 
-    closeModal(): void {
+    closePopup(): void {
         if (this.modalCrudRef) {
             this.modalCrudRef.close();
             this.modalCrudRef = null;
@@ -466,5 +591,67 @@ export abstract class FlyService<T extends FlyEntity, F extends FlyFilter> {
         this.columnsAux.push(column);
     }
 
-    /*start grid methods*/
+    $gridRemove(data) {
+        if (!!data && data.id) {
+            this.remove(Number(data.id)).subscribe(
+                () => this.search().subscribe()
+            );
+        } else {
+            this.getAlertService().confirm('Tem certeza que deseja excluir?', 'Atenção')
+                .subscribe(
+                    (result) => {
+                        if (result === 'YES') {
+                            this.provider.splice(this.provider.indexOf(data), 1);
+                        }
+                    }
+                );
+        }
+    }
+
+    $gridEdit(data) {
+        if (!!data && data.id) {
+
+            if (this.masterService) {
+                this.openPopupCrudForm(data.id);
+            } else {
+                this.editRecord(Number(data.id));
+            }
+        }
+    }
+
+    /*end grid methods*/
+
+
+    /*start crud methods*/
+
+    $crudSave(existOnSaveIfPopup: boolean = false, cleanOnSaveIfPopup: boolean = false): void {
+        this.save(true, !this.isPopup).subscribe(
+            () => {
+                if (this.isPopup) {
+                    if (existOnSaveIfPopup) {
+                        this.closePopup();
+                    } else if (cleanOnSaveIfPopup) {
+                        this.clean();
+                    }
+
+                    this.searchGridCrud();
+                }
+            }
+        );
+    }
+
+    $crudRemove(): void {
+        this.remove(this.entity.id).subscribe(() => {
+            this.getAlertService().success('Registro removido com sucesso!');
+
+            if (!this.isPopup) {
+                this.goToNew();
+            } else {
+                this.searchGridCrud();
+                this.closePopup();
+            }
+        });
+    }
+
+    /*end crud methods*/
 }
