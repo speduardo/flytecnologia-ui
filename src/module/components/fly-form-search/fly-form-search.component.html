@@ -14,7 +14,8 @@
                             [routerLink]="['new']"
                             class="float-right"
                             *ngIf="!service.isPopup"
-                            type="button">
+                            type="button"
+                            style="margin-top:15px">
                         <mat-icon aria-label="New"
                                   fontSet="fa"
                                   fontIcon="fa-plus"></mat-icon>
@@ -22,12 +23,7 @@
 
                 </h4>
                 <div class="div-header-hr">
-                    <mat-progress-bar mode="indeterminate"
-                                      *ngIf="service.isSearching">
-                    </mat-progress-bar>
-
-                    <hr class="sexy-colorgraph"
-                        *ngIf="!service.isSearching">
+                    <fly-hr></fly-hr>
                 </div>
             </div>
         </div>

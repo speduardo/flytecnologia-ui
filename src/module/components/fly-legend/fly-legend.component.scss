@@ -1,9 +1,12 @@
+@import '~@angular/material/theming';
+@import '../../../../theming';
+
 .fly-legend-fieldset {
-    border: 1px solid #53CDE4 !important;
+    border: 1px solid mat-color($candy-app-primary) !important;
     padding: 0 0.2em 1em 1em !important;
     margin-bottom: 10px;
-    -webkit-box-shadow: 0 0 0 0 #53CDE4;
-    box-shadow: 0 0 0 0 #53CDE4;
+    -webkit-box-shadow: 0 0 0 0 mat-color($candy-app-primary);
+    box-shadow: 0 0 0 0 mat-color($candy-app-primary);
     border-radius: 3px;
 }
 

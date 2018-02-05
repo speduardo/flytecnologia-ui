@@ -1,3 +1,46 @@
-<p>
-  fly-input-area works!
-</p>
+<div class="fly-input-area">
+    <div class="form-group"
+         [ngClass]="{ 'has-error': inputField.touched && !inputField.valid }">
+        <label [attr.for]="id"
+               class="control-label"
+               *ngIf="hideLabel !== false && label">
+
+            {{label}}
+            <i class="fly-input-label-required fa fa-asterisk"
+               *ngIf="required"></i>
+            <span *ngIf="requiredConditional">
+                (<i class="fly-input-label-required fa fa-asterisk"></i>)
+            </span>
+
+        </label>
+
+        <textarea
+               class="form-control input-sm"
+               #inputField="ngModel"
+               #inputHtml
+               [id]="id"
+               [name]="id"
+               [attr.aria-label]="label"
+               [maxLength]="maxlength"
+               [minLength]="minlength"
+               [required]="required"
+               [placeholder]="placeholder"
+               [disabled]="disabled"
+               [readonly]="readonly"
+               [(ngModel)]="value"
+               (ngModelChange)="_change($event)"
+               (blur)="_blur($event)"
+               (focus)="_focus($event)"
+               (keyup)="_keyup($event)"
+               (keydown)="_keydown($event)"
+               (change)="_change($event)"
+               (input)="_input($event)"
+               [attr.rows]="rows"
+               [attr.spellcheck]="spellcheck"
+        ></textarea>
+        <p class="fly-input-area-label-contador"
+           *ngIf="readonly !== true && disabled !== true && showCount && !!maxlength && maxlength !== -1">
+            <span> {{ getTotal()}} caracteres restantes</span>
+        </p>
+    </div>
+</div>

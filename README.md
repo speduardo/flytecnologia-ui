@@ -16,14 +16,14 @@
 View all the directives in action at https://jullierme.github.io/flytecnologia-ui
 
 ## Dependencies
-* [Angular](https://angular.io) (*requires* Angular 2 or higher, tested with 2.0.0)
+* [Angular](https://angular.io) (*requires* Angular 5 or higher, tested with 5.0.0)
 
 ## Installation
 Install above dependencies via *npm*. 
 
 Now install `flytecnologia-ui` via:
 ```shell
-npm install --save flytecnologia-ui
+npm install --save flytecnologia-ui --save
 ```
 
 ---
@@ -39,30 +39,30 @@ map: {
 
 Once installed you need to import the main module:
 ```js
-import { LibModule } from 'flytecnologia-ui';
+import { FlytecnologiaUiModule } from 'flytecnologia-ui';
 ```
 The only remaining part is to list the imported module in your application module. The exact method will be slightly
-different for the root (top-level) module for which you should end up with the code similar to (notice ` LibModule .forRoot()`):
+different for the root (top-level) module for which you should end up with the code similar to (notice ` FlytecnologiaUiModule.forRoot()`):
 ```js
-import { LibModule } from 'flytecnologia-ui';
+import { FlytecnologiaUiModule } from 'flytecnologia-ui';
 
 @NgModule({
   declarations: [AppComponent, ...],
-  imports: [LibModule.forRoot(), ...],  
+  imports: [FlytecnologiaUiModule.forRoot(), ...],  
   bootstrap: [AppComponent]
 })
 export class AppModule {
 }
 ```
 
-Other modules in your application can simply import ` LibModule `:
+Other modules in your application can simply import ` FlytecnologiaUiModule `:
 
 ```js
-import { LibModule } from 'flytecnologia-ui';
+import { FlytecnologiaUiModule } from 'flytecnologia-ui';
 
 @NgModule({
   declarations: [OtherComponent, ...],
-  imports: [LibModule, ...], 
+  imports: [FlytecnologiaUiModule, ...], 
 })
 export class OtherModule {
 }

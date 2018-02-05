@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 
 @Component({
-  selector: 'gs-fly-input-upload',
+  selector: 'fly-input-upload',
   templateUrl: './fly-input-upload.component.html',
   styleUrls: ['./fly-input-upload.component.scss'],
     encapsulation: ViewEncapsulation.None,

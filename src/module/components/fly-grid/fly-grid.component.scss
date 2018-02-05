@@ -48,5 +48,6 @@ body .ui-datatable .ui-datatable-data tr.ui-state-highlight {
     width: 100%;
     min-height: 100px;
     text-align: center;
-    color: mat-color($candy-app-primary, 500)
+    color: mat-color($candy-app-primary, 500);
+    background-color: #FFF !important;
 }

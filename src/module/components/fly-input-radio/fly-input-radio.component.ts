@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 
 @Component({
-  selector: 'gs-fly-input-radio',
+  selector: 'fly-input-radio',
   templateUrl: './fly-input-radio.component.html',
   styleUrls: ['./fly-input-radio.component.scss'],
     encapsulation: ViewEncapsulation.None,

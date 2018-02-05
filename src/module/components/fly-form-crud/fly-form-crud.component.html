@@ -18,7 +18,8 @@
                             class="float-right"
                             type="button"
                             *ngIf="!service.isPopup"
-                            tabindex="-1">
+                            tabindex="-1"
+                            style="margin-top:15px">
                         <mat-icon aria-label="Search"
                                   fontSet="fa"
                                   fontIcon="fa-search"></mat-icon>
@@ -30,9 +31,7 @@
                             type="button"
                             *ngIf="service.isPopup"
                             tabindex="-1">
-                        <mat-icon aria-label="Search"
-                                  fontSet="fa"
-                                  fontIcon="fa-times"></mat-icon>
+                        <i class="fa fa-times fa-2x"></i>
                     </button>
                 </h4>
                 <div class="div-header-hr">
@@ -40,8 +39,7 @@
                                       *ngIf="isDisabledButtons()">
                     </mat-progress-bar>
 
-                    <hr class="sexy-colorgraph"
-                        *ngIf="!service?.isSearching">
+                    <fly-hr *ngIf="!service?.isSearching"></fly-hr>
                 </div>
             </div>
         </div>
@@ -57,11 +55,13 @@
         <div class="row">
             <div class="col-md-12 fly-controlbar-crud">
                 <button mat-raised-button
-                        (click)="service.$crudSave()"
+                        (click)="service.$crudSave(false, true)"
                         color="primary"
-                        type="submit"
-                        [disabled]="isDisabledButtons() || !flyForm.form.valid">
-                    {{ labelSaveButton }}
+                        type="button"
+                        [disabled]="isDisabledButtons() || !flyForm.form.valid"
+                        *ngIf="service.isPopup"
+                        class="fly-btn-crud-save-clean">
+                    {{ labelSaveButton }} {{ labelSaveAndCleanButton }}
                 </button>
 
                 <button mat-raised-button
@@ -69,17 +69,17 @@
                         color="primary"
                         type="button"
                         [disabled]="isDisabledButtons() || !flyForm.form.valid"
-                        *ngIf="service.isPopup">
+                        *ngIf="service.isPopup"
+                        class="fly-btn-crud-save-exit">
                     {{ labelSaveButton }} {{ labelSaveAndCloseButton }}
                 </button>
 
                 <button mat-raised-button
-                        (click)="service.$crudSave(false, true)"
+                        (click)="service.$crudSave()"
                         color="primary"
-                        type="button"
-                        [disabled]="isDisabledButtons() || !flyForm.form.valid"
-                        *ngIf="service.isPopup">
-                    {{ labelSaveButton }} {{ labelSaveAndCleanButton }}
+                        type="submit"
+                        [disabled]="isDisabledButtons() || !flyForm.form.valid">
+                    {{ labelSaveButton }}
                 </button>
 
                 <button mat-raised-button

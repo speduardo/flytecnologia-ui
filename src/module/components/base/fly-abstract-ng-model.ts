@@ -1,5 +1,5 @@
 import { ControlValueAccessor, NG_VALIDATORS, NG_VALUE_ACCESSOR } from '@angular/forms';
-import { forwardRef, Input } from '@angular/core';
+import { EventEmitter, forwardRef, Input, Output } from '@angular/core';
 
 /*
 +------------------------------------+----------------------+
@@ -14,6 +14,8 @@ import { forwardRef, Input } from '@angular/core';
 | SelectMultipleControlValueAccessor | select[multiple]     |
 */
 export abstract class FlyAbstractNgModel<T> implements ControlValueAccessor {
+    @Output() ngModelChange: EventEmitter<any> = new EventEmitter(false);
+
     @Input() disabled = false;
     private _value: T;
 

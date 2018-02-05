@@ -1,3 +1,20 @@
-<p>
-  fly-input-checkbox works!
-</p>
+<div class="fly-input-checkbox">
+    <div class="form-group">
+        <label [attr.for]="id"
+               class="fly-input-checkbox-label"
+               *ngIf="alignInRow !== false">
+        </label>
+
+        <mat-checkbox
+            [id]="id"
+            [name]="id"
+            [(ngModel)]="value"
+            [disabled]="disabled"
+            [aria-label]="label"
+            (change)="_change()"
+        class="fly-input-checkbox-md-check">
+            {{ label }}
+            <ng-content></ng-content>
+        </mat-checkbox>
+    </div>
+</div>

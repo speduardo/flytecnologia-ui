@@ -1,4 +1,23 @@
-.fly-controlbar-crud{
+@import '~@angular/material/theming';
+@import '../../../../theming';
+
+.fly-controlbar-crud {
     margin-top: 20px;
     margin-bottom: 10px;
+}
+
+.fly-btn-crud-save-clean {
+    background-color: darken(mat-color($candy-app-primary, 500), 30%) !important;
+}
+
+.fly-btn-crud-save-exit {
+    background-color: darken(mat-color($candy-app-primary, 500), 15%) !important;
+}
+
+.fly-btn-crud-save-clean:disabled {
+    background-color: rgba(0, 0, 0, 0.26) !important;
+}
+
+.fly-btn-crud-save-exit:disabled {
+    background-color: rgba(0, 0, 0, 0.26) !important;
 }
