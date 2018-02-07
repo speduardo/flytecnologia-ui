@@ -18,6 +18,11 @@ import { RouterModule } from '@angular/router';
 import { TableModule } from 'primeng/table';
 
 import { PaginationModule } from 'ngx-bootstrap/pagination';
+import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
+import { TypeaheadModule } from 'ngx-bootstrap/typeahead';
+import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
+
+import { MomentModule } from 'angular2-moment';
 
 import 'hammerjs';
 
@@ -55,6 +60,7 @@ import { FlyInputCheckboxComponent } from './components/fly-input-checkbox/fly-i
 import { FlyInputDateComponent } from './components/fly-input-date/fly-input-date.component';
 import { FlyInputUploadComponent } from './components/fly-input-upload/fly-input-upload.component';
 import { FlyModalService } from './services/fly-modal.service';
+import { FlyDatePipe } from './pipes/fly-date.pipe';
 
 export * from './components/base/fly-abstract-ng-model';
 export * from './components/base/fly-base-input';
@@ -86,6 +92,7 @@ export * from './components/fly-form-processing/fly-form-processing.component';
 export * from './directives/fly-uppercase-input.directive';
 
 export * from './pipes/fly-cpf.pipe';
+export * from './pipes/fly-date.pipe';
 
 export * from './services/fly.service';
 export * from './services/fly-util.service';
@@ -126,7 +133,11 @@ export * from './security/fly-jwt.service';
         MatRadioModule,
         MatCheckboxModule,
         TableModule,
+        MomentModule,
         PaginationModule.forRoot(),
+        BsDatepickerModule.forRoot(),
+        TypeaheadModule.forRoot(),
+        BsDropdownModule.forRoot(),
         FlySecurityModule
     ],
     declarations: [
@@ -136,6 +147,7 @@ export * from './security/fly-jwt.service';
         FlyTabComponent,
         FlyUppercaseInputDirective,
         FlyCpfPipe,
+        FlyDatePipe,
         FlyAlertYesNoComponent,
         FlyAlertOkComponent,
         FlyNotFoundComponent,
@@ -170,13 +182,18 @@ export * from './security/fly-jwt.service';
         MatRadioModule,
         MatCheckboxModule,
         TableModule,
+        MomentModule,
         PaginationModule,
+        BsDatepickerModule,
+        TypeaheadModule,
+        BsDropdownModule,
         FlyLegendComponent,
         FlyHrComponent,
         FlyTabsetComponent,
         FlyTabComponent,
         FlyUppercaseInputDirective,
         FlyCpfPipe,
+        FlyDatePipe,
         FlyAlertYesNoComponent,
         FlyAlertOkComponent,
         FlyNotFoundComponent,
@@ -204,7 +221,7 @@ export * from './security/fly-jwt.service';
 export class FlytecnologiaUiModule {
     /**
      * for root NgModule use imports:[FlytecnologiaUiModule.forRoot()]
-     * for child modules you can use simple: imports:[FlytecnologiaUiModulexzzzze]
+     * for child modules you can use simple: imports:[FlytecnologiaUiModule]
      *
      * @returns {ModuleWithProviders}
      */

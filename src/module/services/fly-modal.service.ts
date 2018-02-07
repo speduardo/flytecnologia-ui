@@ -14,9 +14,7 @@ export class FlyModalService {
         config['width'] = config['width'] || '400px';
         config['data'] = data;
 
-        const dialogRef: FlyModalRef = this.dialog.open(modalComponent, config);
-
-        return dialogRef;
+        return this.dialog.open(modalComponent, config);
     }
 }
 

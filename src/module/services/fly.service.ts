@@ -551,6 +551,10 @@ export abstract class FlyService<T extends FlyEntity, F extends FlyFilter> {
 
     /*start grid methods*/
 
+    _afterPushColumn(column: any): void {
+
+    }
+
     onConfigGrid(service: any): void {
     }
 
@@ -587,7 +591,9 @@ export abstract class FlyService<T extends FlyEntity, F extends FlyFilter> {
         }
     }
 
-    addColumn(column) {
+    addColumn(column: any): void {
+        this._afterPushColumn(column);
+
         this.columnsAux.push(column);
     }
 

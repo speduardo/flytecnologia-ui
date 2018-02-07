@@ -37,7 +37,7 @@ export class FlyGridComponent implements OnInit {
     @ViewChild('flyGridElement') flyGridElement: ElementRef;
 
     @ViewChild('flyGridHeaderTemplate')
-     flyGridHeaderTemplate: TemplateRef<any>;
+    flyGridHeaderTemplate: TemplateRef<any>;
 
     @ViewChild('flyGridCellTemplate')
     flyGridCellTemplate: TemplateRef<any>;
@@ -47,6 +47,9 @@ export class FlyGridComponent implements OnInit {
 
     @ViewChild('flyGridCellRemoveButtonTemplate')
     flyGridCellRemoveButtonTemplate: TemplateRef<any>;
+
+    @ViewChild('flyGridCellDateTemplate')
+    flyGridCellDateTemplate: TemplateRef<any>;
 
     constructor(private dialog: MatDialog) {
 
@@ -59,6 +62,14 @@ export class FlyGridComponent implements OnInit {
         this.configServiceGrid();
         this.addDefaultColumns();
         this.onSearchOnStart();
+    }
+
+    afterPushColumn(column: any, gridInstance: any) {
+        if (column.type && !column.cellTemplate) {
+            if (column.type === 'date') {
+                column.cellTemplate = gridInstance.flyGridCellDateTemplate;
+            }
+        }
     }
 
     onSearchOnStart() {
@@ -80,6 +91,7 @@ export class FlyGridComponent implements OnInit {
         this.service.matDialogService = this.dialog;
         this.service.gridScope = this;
         this.service.flyGridElement = this.flyGridElement;
+        this.service._afterPushColumn = (column) => this.afterPushColumn(column, this);
         /*This must be the last method*/
         this.service.onConfigGrid(this.service);
     }

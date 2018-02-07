@@ -8,7 +8,7 @@ import { Component, Input, OnInit, ViewEncapsulation } from '@angular/core';
 })
 export class FlyLegendComponent implements OnInit {
 
-    @Input() heading: string;
+    @Input() header: string;
     @Input() iconClass: string;
 
     constructor() {

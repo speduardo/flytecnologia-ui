@@ -1,3 +1,53 @@
-<p>
-  fly-input-date works!
-</p>
+<div class="fly-input-date">
+    <div class="form-group"
+         [ngClass]="{ 'has-error': inputField.touched && !inputField.valid }">
+        <label [attr.for]="id"
+               class="control-label"
+               *ngIf="hideLabel !== false && label">
+
+            {{label}}
+            <i class="fly-input-label-required fa fa-asterisk"
+               *ngIf="required"></i>
+            <span *ngIf="requiredConditional">
+                (<i class="fly-input-label-required fa fa-asterisk"></i>)
+            </span>
+
+        </label>
+
+        <div class="input-group mb-3">
+            <input type="text"
+                   class="form-control input-sm"
+                   #inputField="ngModel"
+                   #inputHtml
+                   #dp="bsDatepicker"
+                   [id]="id"
+                   [name]="id"
+                   bsDatepicker
+                   [attr.aria-label]="label"
+                   [minDate]="minDate"
+                   [maxDate]="maxDate"
+                   [required]="required"
+                   [placeholder]="placeholder"
+                   [disabled]="disabled"
+                   [readonly]="readonly"
+                   [(ngModel)]="value"
+                   (ngModelChange)="_change($event)"
+                   (blur)="_blur($event)"
+                   (focus)="_focus($event)"
+                   (keyup)="_keyup($event)"
+                   (keydown)="_keydown($event)"
+                   (change)="_change($event)"
+                   (input)="_input($event)"
+                   [bsConfig]="bsConfig"
+            />
+            <div class="input-group-append">
+                <button class="btn btn-primary"
+                        type="button"
+                        (click)="dp.show() ">
+                    <i class="fa fa-calendar"></i>
+                </button>
+            </div>
+        </div>
+
+    </div>
+</div>

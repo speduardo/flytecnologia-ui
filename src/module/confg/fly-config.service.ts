@@ -11,6 +11,14 @@ export class FlyConfigService {
     production: boolean;
     apiUrl: string;
     authorizationBasicCode: string;
+    dateInputFormat = 'DD/MM/YYYY';
+
+    /*
+     *  theme-default, theme-green, theme-blue, theme-dark-blue
+     *  theme-red, theme-orange
+     *
+     */
+    datePickerTheme = 'theme-default';
 
     constructor(public router: Router,
                 public appService: FlyAppService,

@@ -150,6 +150,12 @@
         </button>
     </ng-template>
 
+    <ng-template #flyGridCellDateTemplate
+                 let-col="col"
+                 let-row="row">
+        <label>{{row[col?.field] | flyDatePipe }}</label>
+    </ng-template>
+
     <ng-template #flyGridCellRemoveButtonTemplate
                  let-col="col"
                  let-row="row">
