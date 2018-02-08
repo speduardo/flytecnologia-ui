@@ -1,0 +1,53 @@
+<div class="fly-input-autocomplete">
+    <div class="form-group"
+         [ngClass]="{ 'has-error': inputField.touched && !inputField.valid }">
+        <label [attr.for]="id"
+               class="control-label"
+               *ngIf="hideLabel !== false && label">
+
+            {{label}}
+            <i class="fly-input-label-required fa fa-asterisk"
+               *ngIf="required"></i>
+            <span *ngIf="requiredConditional">
+                (<i class="fly-input-label-required fa fa-asterisk"></i>)
+            </span>
+
+        </label>
+
+        <div class="input-group mb-3">
+            <input type="text"
+                   class="form-control input-sm"
+                   [(ngModel)]="selected"
+                   [typeahead]="provider"
+                   #inputField="ngModel"
+                   #inputHtml
+                   [id]="id"
+                   [name]="id"
+                   [attr.aria-label]="label"
+                   [required]="required"
+                   [placeholder]="placeholder"
+                   [disabled]="disabled"
+                   [readonly]="readonly"
+                   (ngModelChange)="_change($event)"
+                   (blur)="_blur($event)"
+                   (focus)="_focus($event)"
+                   (keyup)="_keyup($event)"
+                   (keydown)="_keydown($event)"
+                   (change)="_change($event)"
+                   (input)="_input($event)"
+            />
+            <div class="input-group-append">
+                <button class="btn btn-primary"
+                        type="button"
+                        (click)="openSearchPopup() ">
+                    <i class="fa fa-search"></i>
+                </button>
+                <button class="btn btn-secondary"
+                        type="button"
+                        (click)="openCrudPopup() ">
+                    <i class="fa fa-plus"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

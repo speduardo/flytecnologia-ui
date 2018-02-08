@@ -22,8 +22,6 @@ import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { TypeaheadModule } from 'ngx-bootstrap/typeahead';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 
-import { MomentModule } from 'angular2-moment';
-
 import 'hammerjs';
 
 import { FlyInputTextComponent } from './components/fly-input-text/fly-input-text.component';
@@ -61,6 +59,7 @@ import { FlyInputDateComponent } from './components/fly-input-date/fly-input-dat
 import { FlyInputUploadComponent } from './components/fly-input-upload/fly-input-upload.component';
 import { FlyModalService } from './services/fly-modal.service';
 import { FlyDatePipe } from './pipes/fly-date.pipe';
+import { FlyInputAutocompleteComponent } from './components/fly-input-autocomplete/fly-input-autocomplete.component';
 
 export * from './components/base/fly-abstract-ng-model';
 export * from './components/base/fly-base-input';
@@ -71,6 +70,7 @@ export * from './components/fly-input-radio/fly-input-radio.component';
 export * from './components/fly-input-select/fly-input-select.component';
 export * from './components/fly-input-upload/fly-input-upload.component';
 export * from './components/fly-input-text/fly-input-text.component';
+export * from './components/fly-input-autocomplete/fly-input-autocomplete.component';
 export * from './components/fly-legend/fly-legend.component';
 export * from './components/fly-hr/fly-hr.component';
 export * from './components/fly-tabset/fly-tab/fly-tab.component';
@@ -133,7 +133,6 @@ export * from './security/fly-jwt.service';
         MatRadioModule,
         MatCheckboxModule,
         TableModule,
-        MomentModule,
         PaginationModule.forRoot(),
         BsDatepickerModule.forRoot(),
         TypeaheadModule.forRoot(),
@@ -166,6 +165,7 @@ export * from './security/fly-jwt.service';
         FlyInputCheckboxComponent,
         FlyInputDateComponent,
         FlyInputUploadComponent,
+        FlyInputAutocompleteComponent,
     ],
     exports: [
         FormsModule,
@@ -182,7 +182,6 @@ export * from './security/fly-jwt.service';
         MatRadioModule,
         MatCheckboxModule,
         TableModule,
-        MomentModule,
         PaginationModule,
         BsDatepickerModule,
         TypeaheadModule,
@@ -212,6 +211,7 @@ export * from './security/fly-jwt.service';
         FlyInputCheckboxComponent,
         FlyInputDateComponent,
         FlyInputUploadComponent,
+        FlyInputAutocompleteComponent,
     ],
     entryComponents: [
         FlyAlertYesNoComponent,

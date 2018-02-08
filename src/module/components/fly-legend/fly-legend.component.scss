@@ -8,6 +8,10 @@
     -webkit-box-shadow: 0 0 0 0 mat-color($candy-app-primary);
     box-shadow: 0 0 0 0 mat-color($candy-app-primary);
     border-radius: 3px;
+
+    .row{
+        margin-right: 0;
+    }
 }
 
 .fly-legend-title {

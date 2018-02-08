@@ -11,8 +11,9 @@
             [(ngModel)]="value"
             [disabled]="disabled"
             [aria-label]="label"
-            (change)="_change()"
-        class="fly-input-checkbox-md-check">
+            (change)="cbOnChange($event)"
+            #inputField="ngModel"
+            class="fly-input-checkbox-md-check">
             {{ label }}
             <ng-content></ng-content>
         </mat-checkbox>

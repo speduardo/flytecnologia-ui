@@ -27,8 +27,8 @@ export class FlyGridComponent implements OnInit {
     @Input() showRemoveButton = false;
     @Input() showPagination = false;
 
-    @Input() watch = [];
-    @Input() watchNonRequired = [];
+   // @Input() watch = [];
+   // @Input() watchNonRequired = [];
 
     @Input() gridHeight = '250px';
     @Input() labelAddButton = 'ADICIONAR';

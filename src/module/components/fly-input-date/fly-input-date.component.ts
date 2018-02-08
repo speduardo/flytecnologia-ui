@@ -1,11 +1,13 @@
 import { Component, ElementRef, Input, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { NgModel } from '@angular/forms';
+import { BsDatepickerConfig } from 'ngx-bootstrap';
 
 import { FlyUtilService } from '../../services/fly-util.service';
 import { FlyBaseInput } from '../base/fly-base-input';
-import { NgModel } from '@angular/forms';
 import { ngModelProvider } from '../base/fly-abstract-ng-model';
-import { FlyConfigService } from "../../confg/fly-config.service";
-import { BsDatepickerConfig } from "ngx-bootstrap";
+import { FlyConfigService } from '../../confg/fly-config.service';
+
+import * as moment from 'moment';
 
 let nextUniqueId = 0;
 
@@ -46,11 +48,25 @@ export class FlyInputDateComponent extends FlyBaseInput implements OnInit {
         }
 
         this.bsConfig = Object.assign({}, {
-            containerClass: this.configService.datePickerTheme
+            containerClass: this.configService.datePickerTheme,
+            dateInputFormat: this.dateInputFormat
         });
     }
 
     ngOnInit(): void {
         super.ngOnInit();
     }
+
+    public checkValue(value: any): Date {
+        if (value && typeof value === 'string') {
+            if (value.indexOf('-') >= 0) {
+                value = moment(value, 'YYYY-MM-DD').toDate();
+            } else {
+                value = moment(value, 'DD/MM/YYYY').toDate();
+            }
+        }
+
+        return value;
+    }
+
 }
