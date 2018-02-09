@@ -5,7 +5,7 @@
     </div>
 
     <div *ngIf="isDefaultValuesAvalilable">
-        <div class="row">
+        <div class="row fly-crud-row-header" >
             <div class="col-md-12">
                 <h4 class="fly-header">
                     <i class="fa fa-wpforms" style="margin-right: 5px"></i>
@@ -34,13 +34,6 @@
                         <i class="fa fa-times fa-2x"></i>
                     </button>
                 </h4>
-                <div class="div-header-hr">
-                    <mat-progress-bar mode="indeterminate"
-                                      *ngIf="isDisabledButtons()">
-                    </mat-progress-bar>
-
-                    <fly-hr *ngIf="!service?.isSearching"></fly-hr>
-                </div>
             </div>
         </div>
         <ng-content select="[body]">
@@ -103,5 +96,8 @@
                 </span>-->
             </div>
         </div>
+        <mat-progress-bar mode="indeterminate"
+                          *ngIf="isDisabledButtons()">
+        </mat-progress-bar>
     </div>
 </form>

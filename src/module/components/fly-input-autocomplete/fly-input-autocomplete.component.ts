@@ -1,12 +1,12 @@
 import { Component, ElementRef, Input, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { NgModel } from '@angular/forms';
+import { TypeaheadMatch } from 'ngx-bootstrap';
 
 import { FlyUtilService } from '../../services/fly-util.service';
 import { FlyBaseInput } from '../base/fly-base-input';
 import { ngModelProvider } from '../base/fly-abstract-ng-model';
 import { FlyConfigService } from '../../confg/fly-config.service';
 import { FlyService } from '../../services/fly.service';
-import { TypeaheadMatch } from "ngx-bootstrap";
 
 
 let nextUniqueId = 0;

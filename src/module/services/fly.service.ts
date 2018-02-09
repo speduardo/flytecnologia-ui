@@ -14,37 +14,24 @@ import { FlyFilter } from './filter/fly-filter';
 import { FlyGridComponent } from '../components/fly-grid/fly-grid.component';
 import { FlyAlertService } from './fly-alert.service';
 import { FlyModalCrudData, FlyModalRef } from './fly-modal.service';
+import { FlyUtilService } from './fly-util.service';
 
 export abstract class FlyService<T extends FlyEntity, F extends FlyFilter> {
     controller: string;
     filter: F;
     _entity: T;
     parameters: any = {};
-    itemsPerPage = 10;
-    totalElements = 0;
-    totalPages = 0;
-    numberOfElements = 0;
-    provider = [];
-    columns = [];
-    columnsAux = [];
-    gridScope: FlyGridComponent;
-    flyGridElement: ElementRef;
     isSearching = false;
     isSaving = false;
     isRemoving = false;
     isPrinting = false;
     isPopup = false;
-    showProgressbarGrid = true;
     urlRouter: string;
     isFormSearch = false;
-    isFormCrud = false;
     isDefaultValuesLoaded = false;
     defaultValues = {};
-    itemsAutocomplete = [];
     methodNameDefaultValuesCrud = 'defaultValuesCrud';
     methodNameDefaultValuesSearch = 'defaultValuesSearch';
-    methodNameAutocomplete = 'autocomplete';
-    crudFormComponent: any;
 
     gridMasterService: FlyService<any, any>;
     masterService: FlyService<any, any>;
@@ -57,9 +44,34 @@ export abstract class FlyService<T extends FlyEntity, F extends FlyFilter> {
     listNameEntityMasterPropertyList = [];
     cleanEvent: EventEmitter<any> = new EventEmitter();
 
-    showAllRecordsOnSearch = false;
+    /*form crud*/
+    isFormCrud = false;
+    crudFormComponent: any;
+    /*form crud*/
 
-    private _entityEmpty: T;
+    /*grid*/
+    showProgressbarGrid = true;
+    itemsPerPage = 10;
+    totalElements = 0;
+    totalPages = 0;
+    numberOfElements = 0;
+    provider = [];
+    columns = [];
+    columnsAux = [];
+    gridScope: FlyGridComponent;
+    flyGridElement: ElementRef;
+    showAllRecordsOnSearch = false;
+    /*grid*/
+
+    /*autocomplete*/
+    itemsAutocomplete = [];
+    methodNameAutocomplete = 'autocomplete';
+    fieldDescription: string;
+    fieldValue = 'id';
+    extraFieldsAutocomplete: Array<string> = [];
+    /*autocomplete*/
+
+    private _emptyEntity: T;
 
     constructor(protected http: FlyHttpClient,
                 protected config: FlyConfigService,
@@ -73,8 +85,8 @@ export abstract class FlyService<T extends FlyEntity, F extends FlyFilter> {
     set entity(value: T) {
         this._entity = value;
 
-        if (value && !this._entityEmpty) {
-            this._entityEmpty = value;
+        if (value && !this._emptyEntity) {
+            this._emptyEntity = value;
         }
     }
 
@@ -113,7 +125,7 @@ export abstract class FlyService<T extends FlyEntity, F extends FlyFilter> {
                 this.addMasterEntityInDetailEntity();
 
                 const entity = {
-                    entity: this.entity,
+                    entity: this.prepareEntityToPersisty(this.entity),
                     parameters: this.parameters
                 };
 
@@ -163,14 +175,14 @@ export abstract class FlyService<T extends FlyEntity, F extends FlyFilter> {
                 this.addMasterEntityInDetailEntity();
 
                 const entity = {
-                    entity: this.entity,
+                    entity: this.prepareEntityToPersisty(this.entity),
                     parameters: this.parameters
                 };
 
                 this.http.put(`${this.getUrlBase()}/${this.entity.id}`, entity)
                     .subscribe((data) => {
                         this.isSaving = false;
-                        this.entity = data;
+                        this.entity = this.checkValues(data);
                         this.findResult();
                         this.afterSave();
                         observer.next(data);
@@ -277,7 +289,7 @@ export abstract class FlyService<T extends FlyEntity, F extends FlyFilter> {
                             if (goToEditPage) {
                                 this.goToEdit(response.id);
                             } else {
-                                this.entity = response;
+                                this.entity = this.checkValues(response);
 
                                 if (this.isPopup) {
                                     this.searchGridCrud();
@@ -331,6 +343,17 @@ export abstract class FlyService<T extends FlyEntity, F extends FlyFilter> {
         });
     }
 
+    checkValues(entity: T): T {
+        return <T>FlyUtilService.convertNullValuesToNewInstanceOfEntity(entity, this._emptyEntity);
+    }
+
+    prepareEntityToPersisty(entity: T): T {
+        return <T>FlyUtilService.prepareEntityToPersisty(
+            this._emptyEntity,
+            FlyUtilService.clone(entity)
+        );
+    }
+
     findById(id: number = this.entity.id): Observable<T> {
         return new Observable(observer => {
             this.isSearching = true;
@@ -338,7 +361,7 @@ export abstract class FlyService<T extends FlyEntity, F extends FlyFilter> {
             this.http.get(`${this.getUrlBase()}/${id}`)
                 .subscribe((data) => {
                     this.isSearching = false;
-                    this.entity = data;
+                    this.entity = this.checkValues(data);
 
                     this.findResult();
 
@@ -376,11 +399,16 @@ export abstract class FlyService<T extends FlyEntity, F extends FlyFilter> {
         });
     }
 
-    autocomplete(entity: T): Observable<any> {
+    autocomplete(params: any = this.parameters): Observable<any> {
         return new Observable(observer => {
+
             this.isSearching = true;
 
-            this.http.get(`${this.getUrlBase()}/${this.methodNameAutocomplete}`)
+            params.fieldValue = this.fieldValue;
+            params.fieldDescription = this.fieldDescription;
+            params.extraFieldsAutocomplete = this.extraFieldsAutocomplete;
+
+            this.http.get(`${this.getUrlBase()}/${this.methodNameAutocomplete}`, {params: flyParams})
                 .debounceTime(400)
                 .distinctUntilChanged()
                 .subscribe((data) => {
@@ -430,21 +458,7 @@ export abstract class FlyService<T extends FlyEntity, F extends FlyFilter> {
             return;
         }
 
-        /*const props = Object.getOwnPropertyNames(this.entity);
-
-        const self = this;
-
-        props.forEach(function (prop) {
-            if (self.entity[prop] && self.entity[prop] instanceof FlyEntityImpl) {
-                self.entity[prop] = {};
-            } else {
-                self.entity[prop] = null;
-            }
-
-        });*/
-
-        this.entity = Object.create(this._entityEmpty);
-
+        this.entity = Object.create(this._emptyEntity);
     }
 
     cleanFilter(): void {
@@ -454,10 +468,8 @@ export abstract class FlyService<T extends FlyEntity, F extends FlyFilter> {
 
         const props = Object.getOwnPropertyNames(this.filter);
 
-        const self = this;
-
-        props.forEach(function (prop) {
-            self.filter[prop] = '';
+        props.forEach((prop) => {
+            this.filter[prop] = '';
         });
 
         this.filter.size = this.itemsPerPage;
@@ -482,7 +494,7 @@ export abstract class FlyService<T extends FlyEntity, F extends FlyFilter> {
 
         const page = filter.page !== -1 ? (filter.page > 0 ? (filter.page - 1) : 0) : -1;
 
-        props.forEach(function (prop) {
+        props.forEach((prop) => {
             if (prop === 'page') {
                 params = params.set(prop, !!page ? page.toString() : '');
             } else {

@@ -1,10 +1,57 @@
 import { Injectable } from '@angular/core';
+import { FlyEntity } from './entity/fly-entity';
+import { FlyEntityImpl } from './entity/fly-entity-impl';
+import { FlyEmbeddedEntity } from './entity/fly-embedded-entity';
+import * as _ from 'lodash';
 
 @Injectable()
 export class FlyUtilService {
 
     constructor() {
 
+    }
+
+    static clone(obj: any): any {
+        return _.cloneDeep(obj);
+    }
+
+    static convertNullValuesToNewInstanceOfEntity(entity: FlyEntity, emptyEntity: FlyEntity): FlyEntity {
+        if (entity == null) {
+            return Object.create(emptyEntity);
+        }
+
+        const props = Object.getOwnPropertyNames(emptyEntity);
+
+        props.forEach((prop) => {
+            if ((emptyEntity[prop] instanceof FlyEntityImpl || emptyEntity[prop] instanceof FlyEmbeddedEntity)) {
+
+                if (!entity[prop]) {
+                    entity[prop] = Object.assign({}, emptyEntity[prop]);
+                }
+
+                this.convertNullValuesToNewInstanceOfEntity(entity[prop], emptyEntity[prop]);
+            }
+        });
+
+        return entity;
+    }
+
+    static prepareEntityToPersisty(emptyEntity: FlyEntity, entity: FlyEntity): FlyEntity {
+        const props = Object.getOwnPropertyNames(entity);
+
+        props.forEach((prop) => {
+            if (emptyEntity[prop] instanceof FlyEntityImpl) {
+                if (entity[prop] && !entity[prop].id) {
+                    entity[prop] = null;
+                }
+            } else if (emptyEntity[prop] instanceof FlyEmbeddedEntity) {
+                if (entity[prop]) {
+                    this.prepareEntityToPersisty(emptyEntity[prop], entity[prop]);
+                }
+            }
+        });
+
+        return entity;
     }
 
     getColClass(value: any, defaultValue: number): string {
@@ -38,4 +85,6 @@ export class FlyUtilService {
 
         return value.toString().toLowerCase() === 'false';
     }
+
+
 }
