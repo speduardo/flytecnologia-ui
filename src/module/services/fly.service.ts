@@ -68,7 +68,7 @@ export abstract class FlyService<T extends FlyEntity, F extends FlyFilter> {
     methodNameAutocomplete = 'autocomplete';
     fieldDescription: string;
     fieldValue = 'id';
-    extraFieldsAutocomplete: Array<string> = [];
+    extraFieldsAutocomplete: string;
     /*autocomplete*/
 
     private _emptyEntity: T;
@@ -399,16 +399,17 @@ export abstract class FlyService<T extends FlyEntity, F extends FlyFilter> {
         });
     }
 
-    autocomplete(params: any = this.parameters): Observable<any> {
+    autocomplete(value: string, params: any = this.parameters): Observable<any> {
         return new Observable(observer => {
 
             this.isSearching = true;
 
+            params.value = value;
             params.fieldValue = this.fieldValue;
             params.fieldDescription = this.fieldDescription;
             params.extraFieldsAutocomplete = this.extraFieldsAutocomplete;
 
-            this.http.get(`${this.getUrlBase()}/${this.methodNameAutocomplete}`, {params: flyParams})
+            this.http.get(`${this.getUrlBase()}/${this.methodNameAutocomplete}`, {params: params})
                 .debounceTime(400)
                 .distinctUntilChanged()
                 .subscribe((data) => {

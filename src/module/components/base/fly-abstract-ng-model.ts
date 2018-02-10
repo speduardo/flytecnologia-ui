@@ -27,14 +27,19 @@ export abstract class FlyAbstractNgModel<T> implements ControlValueAccessor {
     onTouched(): void {
     }
 
-    get value(): T {
+    public get value(): T {
         return this._value;
     }
 
-    set value(value: T) {
+    public set value(value: T) {
         value = this.checkValue(value);
         this._value = value;
+        this.onSetValue();
         this.onChange(value);
+    }
+
+    public onSetValue(): void {
+
     }
 
     public checkValue(value: T): T {

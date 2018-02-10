@@ -68,7 +68,7 @@ export class FlyErrorHandler implements ErrorHandler {
                     errorResponse.error.forEach((error) => {
                         msg += error.msgUser + '\n';
 
-                        if (!environment.production && !!error.msgDev) {
+                        if (!!error.msgDev) {
                             console.error(error.msgDev);
                         }
                     });
@@ -84,16 +84,12 @@ export class FlyErrorHandler implements ErrorHandler {
                     }
                 }
             } catch (e) {
-                if (!environment.production) {
                     console.error(errorResponse.error);
-                }
             }
         } else {
             msg = 'Erro ao processar a ação. Tente novamente.';
 
-            if (!environment.production) {
                 console.error(errorResponse);
-            }
         }
 
         this.zone.run(() => this.service().error(msg));

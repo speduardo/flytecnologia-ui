@@ -7,6 +7,7 @@ import { FlyBaseInput } from '../base/fly-base-input';
 import { ngModelProvider } from '../base/fly-abstract-ng-model';
 import { FlyConfigService } from '../../confg/fly-config.service';
 import { FlyService } from '../../services/fly.service';
+import { Observable } from 'rxjs/Observable';
 
 
 let nextUniqueId = 0;
@@ -31,7 +32,7 @@ export class FlyInputAutocompleteComponent extends FlyBaseInput implements OnIni
     @Input() selectOnTab: boolean;
     @Input() service: FlyService<any, any>;
 
-    selected: string;
+    private _textTyped: string;
     asyncSelected: string;
     typeaheadLoading: boolean;
     typeaheadNoResults: boolean;
@@ -43,6 +44,11 @@ export class FlyInputAutocompleteComponent extends FlyBaseInput implements OnIni
     constructor(private utilService: FlyUtilService,
                 private configService: FlyConfigService) {
         super(utilService);
+
+        this.provider = Observable.create((observer: any) => {
+            // Runs on every search
+            observer.next(this.textTyped);
+        }).mergeMap((token: string) => this.service.autocomplete(token));
     }
 
 
@@ -51,7 +57,6 @@ export class FlyInputAutocompleteComponent extends FlyBaseInput implements OnIni
     }
 
     public checkValue(value: any): Date {
-
         return value;
     }
 
@@ -72,7 +77,27 @@ export class FlyInputAutocompleteComponent extends FlyBaseInput implements OnIni
     }
 
     typeaheadOnSelect(e: TypeaheadMatch): void {
-        this.value = e.value;
-        console.log('Selected value: ', e.value);
+        this.value = e.item[this.service.fieldValue];
+    }
+
+    public get textTyped(): string {
+        return this._textTyped;
+    }
+
+    public set textTyped(value) {
+        this._textTyped = value;
+        this.value = null;
+    }
+
+    _blur($event: any) {
+        super._blur($event);
+
+        if (!this.value) {
+            this._textTyped = null;
+        }
+    }
+
+    onSetValue() {
+        console.log(this.value);
     }
 }

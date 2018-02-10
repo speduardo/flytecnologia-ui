@@ -17,8 +17,13 @@
         <div class="input-group mb-3">
             <input type="text"
                    class="form-control input-sm"
-                   [(ngModel)]="selected"
+                   [(ngModel)]="textTyped"
                    [typeahead]="provider"
+                   (typeaheadLoading)="changeTypeaheadLoading($event)"
+                   (typeaheadNoResults)="changeTypeaheadNoResults($event)"
+                   (typeaheadOnSelect)="typeaheadOnSelect($event)"
+                   [typeaheadOptionsLimit]="7"
+                   [typeaheadOptionField]="service.fieldDescription"
                    #inputField="ngModel"
                    #inputHtml
                    [id]="id"
@@ -35,6 +40,7 @@
                    (keydown)="_keydown($event)"
                    (change)="_change($event)"
                    (input)="_input($event)"
+                   autocomplete="off"
             />
             <div class="input-group-append">
                 <button class="btn btn-primary"
@@ -49,5 +55,7 @@
                 </button>
             </div>
         </div>
+        <!--<div *ngIf="typeaheadLoading===true">Loading</div>-->
+        <!--<div *ngIf="typeaheadNoResults===true">&#10060; No Results Found</div>-->
     </div>
 </div>
