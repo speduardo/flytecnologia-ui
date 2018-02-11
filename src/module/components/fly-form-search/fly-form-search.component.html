@@ -21,6 +21,14 @@
                                   fontIcon="fa-plus"></mat-icon>
                     </button>
 
+                    <button mat-icon-button
+                            (click)="service.closePopup()"
+                            class="float-right"
+                            type="button"
+                            *ngIf="service.isPopup"
+                            tabindex="-1">
+                        <i class="fa fa-times fa-2x"></i>
+                    </button>
                 </h4>
             </div>
         </div>

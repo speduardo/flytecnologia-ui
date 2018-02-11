@@ -24,6 +24,9 @@
                    (typeaheadOnSelect)="typeaheadOnSelect($event)"
                    [typeaheadOptionsLimit]="7"
                    [typeaheadOptionField]="service.fieldDescription"
+                   [typeaheadItemTemplate]="itemTemplate"
+                   [typeaheadWaitMs]="300"
+                   [typeaheadMinLength]="1"
                    #inputField="ngModel"
                    #inputHtml
                    [id]="id"
@@ -45,12 +48,16 @@
             <div class="input-group-append">
                 <button class="btn btn-primary"
                         type="button"
-                        (click)="openSearchPopup() ">
+                        (click)="openSearchPopup() "
+                        [disabled]="service.isSearching || disabled"
+                        *ngIf="service.seachFormComponent">
                     <i class="fa fa-search"></i>
                 </button>
                 <button class="btn btn-secondary"
                         type="button"
-                        (click)="openCrudPopup() ">
+                        [disabled]="service.isSearching || disabled"
+                        (click)="openCrudPopup() "
+                        *ngIf="service.crudFormComponent">
                     <i class="fa fa-plus"></i>
                 </button>
             </div>
@@ -58,4 +65,13 @@
         <!--<div *ngIf="typeaheadLoading===true">Loading</div>-->
         <!--<div *ngIf="typeaheadNoResults===true">&#10060; No Results Found</div>-->
     </div>
+
+    <ng-template #originalItemTemplate
+                 let-match="match"
+                 let-model="item"
+                 let-query="query"
+                 let-index="index">
+        <span style="font-size: 10px">{{ model.id }}</span>&nbsp;&nbsp;
+        <span [innerHtml]="hightlight(match, query)"></span>
+    </ng-template>
 </div>

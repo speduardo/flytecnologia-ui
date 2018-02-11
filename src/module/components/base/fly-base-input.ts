@@ -20,7 +20,7 @@ export abstract class FlyBaseInput extends FlyAbstractNgModel<any> implements On
 
     ngOnInit() {
         if (!this.name) {
-            throw new Error('Attribute \'name\' is required');
+            FlyUtilService.fieldRequired('name');
         }
     }
 

@@ -5,6 +5,8 @@ import { Observable } from 'rxjs/Observable';
 import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material';
 
+import * as _ from 'lodash';
+
 import './../confg/rxjs-operators.config';
 
 import { FlyHttpClient } from '../security/fly-http-client';
@@ -13,7 +15,7 @@ import { FlyEntity } from './entity/fly-entity';
 import { FlyFilter } from './filter/fly-filter';
 import { FlyGridComponent } from '../components/fly-grid/fly-grid.component';
 import { FlyAlertService } from './fly-alert.service';
-import { FlyModalCrudData, FlyModalRef } from './fly-modal.service';
+import { FlyModalCrudData, FlyModalRef, FlyModalSearchData } from './fly-modal.service';
 import { FlyUtilService } from './fly-util.service';
 
 export abstract class FlyService<T extends FlyEntity, F extends FlyFilter> {
@@ -35,7 +37,6 @@ export abstract class FlyService<T extends FlyEntity, F extends FlyFilter> {
 
     gridMasterService: FlyService<any, any>;
     masterService: FlyService<any, any>;
-    modalCrudRef: FlyModalRef;
     matDialogService: MatDialog;
     form: NgForm;
 
@@ -45,6 +46,7 @@ export abstract class FlyService<T extends FlyEntity, F extends FlyFilter> {
     cleanEvent: EventEmitter<any> = new EventEmitter();
 
     /*form crud*/
+    modalCrudRef: FlyModalRef;
     isFormCrud = false;
     crudFormComponent: any;
     /*form crud*/
@@ -64,8 +66,11 @@ export abstract class FlyService<T extends FlyEntity, F extends FlyFilter> {
     /*grid*/
 
     /*autocomplete*/
+    modalSearchRef: FlyModalRef;
+    seachFormComponent: any;
     itemsAutocomplete = [];
-    methodNameAutocomplete = 'autocomplete';
+    methodNameAutocomplete = 'getListAutocomplete';
+    methodNameItemAutocomplete = 'getItemAutocomplete';
     fieldDescription: string;
     fieldValue = 'id';
     extraFieldsAutocomplete: string;
@@ -296,7 +301,7 @@ export abstract class FlyService<T extends FlyEntity, F extends FlyFilter> {
                                 }
                             }
 
-                            observer.next(response);
+                            observer.next(this.entity);
                             observer.complete();
                         }, reject => {
                             observer.error(reject);
@@ -365,7 +370,7 @@ export abstract class FlyService<T extends FlyEntity, F extends FlyFilter> {
 
                     this.findResult();
 
-                    observer.next(data);
+                    observer.next(this.entity);
                     observer.complete();
                 }, (error) => {
                     this.isSearching = false;
@@ -399,7 +404,7 @@ export abstract class FlyService<T extends FlyEntity, F extends FlyFilter> {
         });
     }
 
-    autocomplete(value: string, params: any = this.parameters): Observable<any> {
+    getListAutocomplete(value: string, params: any = this.parameters): Observable<any> {
         return new Observable(observer => {
 
             this.isSearching = true;
@@ -416,10 +421,55 @@ export abstract class FlyService<T extends FlyEntity, F extends FlyFilter> {
                     this.isSearching = false;
                     this.itemsAutocomplete = data;
 
+                    if (!data) {
+                        data = [];
+                    }
+
                     observer.next(data);
                     observer.complete();
                 }, (error) => {
                     this.itemsAutocomplete = [];
+                    this.isSearching = false;
+
+                    observer.error(error);
+                    observer.complete();
+                });
+        });
+    }
+
+    prepareParameters(params): void {
+        _.forEach(params, function (value, key) {
+            if (!params[key]) {
+                delete params[key];
+            }
+        });
+    }
+
+    getItemAutocomplete(value: null, params: any = this.parameters): Observable<any> {
+        return new Observable(observer => {
+
+            this.isSearching = true;
+
+            params.id = value;
+            params.fieldValue = this.fieldValue;
+            params.fieldDescription = this.fieldDescription;
+            params.extraFieldsAutocomplete = this.extraFieldsAutocomplete ? this.extraFieldsAutocomplete : null;
+
+            this.prepareParameters(params);
+
+            this.http.get(`${this.getUrlBase()}/${this.methodNameItemAutocomplete}`,
+                {params: params})
+                .distinctUntilChanged()
+                .subscribe((data) => {
+                    this.isSearching = false;
+
+                    if (data) {
+                        this.entity = this.checkValues(data);
+                    } // do not clean entity here. It's will be clean in autocomplete componente
+
+                    observer.next(this.entity);
+                    observer.complete();
+                }, (error) => {
                     this.isSearching = false;
 
                     observer.error(error);
@@ -460,6 +510,8 @@ export abstract class FlyService<T extends FlyEntity, F extends FlyFilter> {
         }
 
         this.entity = Object.create(this._emptyEntity);
+
+        this.onSetValueAutocomplete(null);
     }
 
     cleanFilter(): void {
@@ -582,7 +634,7 @@ export abstract class FlyService<T extends FlyEntity, F extends FlyFilter> {
         };
 
         this.modalCrudRef = this.matDialogService.open(this.crudFormComponent, {
-            width: '800px',
+            panelClass: 'container',
             data: data
         })
         ;
@@ -602,12 +654,22 @@ export abstract class FlyService<T extends FlyEntity, F extends FlyFilter> {
             this.modalCrudRef.close();
             this.modalCrudRef = null;
         }
+
+        if (this.modalSearchRef) {
+            this.modalSearchRef.close();
+            this.modalSearchRef = null;
+        }
     }
 
-    addColumn(column: any): void {
+    addColumn(column: any, index = -1): void {
         this._afterPushColumn(column);
 
-        this.columnsAux.push(column);
+        if (index < 0) {
+            this.columnsAux.push(column);
+        } else {
+            this.columnsAux.splice(index, 0, column);
+        }
+
     }
 
     $gridRemove(data) {
@@ -635,6 +697,14 @@ export abstract class FlyService<T extends FlyEntity, F extends FlyFilter> {
             } else {
                 this.editRecord(Number(data.id));
             }
+        }
+    }
+
+    $gridSelectToAutocomplete(data) {
+        if (this.isPopup && !!data && data[this.masterService.fieldValue]) {
+            this.masterService.cleanEntity();
+            this.masterService.onSetValueAutocomplete(data[this.masterService.fieldValue]);
+            this.closePopup();
         }
     }
 
@@ -673,4 +743,32 @@ export abstract class FlyService<T extends FlyEntity, F extends FlyFilter> {
     }
 
     /*end crud methods*/
+
+    /*start autocomplete methods*/
+    onSetValueAutocomplete(value: any) {
+
+    }
+
+    openPopupSearchForm(): void {
+        const data: FlyModalSearchData = {
+            autocompleteService: this
+        };
+
+        this.modalSearchRef = this.matDialogService.open(this.seachFormComponent, {
+            panelClass: 'container',
+            data: data
+        })
+        ;
+
+        /* const dialogRef: FlyModalRef = this.modalService.open(this.service.crudFormComponent, {
+             id: id,
+             gridService: this.service
+         });*/
+
+        this.modalSearchRef.afterClosed().subscribe((result) => {
+            return result;
+        });
+    }
+
+    /*end autocomplete methods*/
 }

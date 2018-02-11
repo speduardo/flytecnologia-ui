@@ -49,7 +49,8 @@
                     <p-tableCheckbox [value]="rowData"></p-tableCheckbox>
                 </td>
                 <td *ngFor="let col of service.columns"
-                    [style]="col.style">
+                    [style]="col.style"
+                    (dblclick)="dblclickItem(service, rowData)">
 
                     <ng-container
                         *ngTemplateOutlet="col.cellTemplate ? col.cellTemplate: flyGridCellTemplate;
@@ -139,14 +140,14 @@
 
     </p-table>
 
-    <ng-template #flyGridCellEditButtonTemplate
+    <ng-template #flyGridCellButtonTemplate
                  let-col="col"
                  let-row="row">
-        <button class="btn btn-primary btn-sm"
+        <button [ngClass]="['btn', 'btn-sm', col.buttonClass]"
                 (click)="col.click(service, row)"
                 type="button">
 
-            <i class="fa fa-edit"></i>
+            <i [ngClass]="['fa', col.iconButtonClass]"></i>
         </button>
     </ng-template>
 
@@ -156,14 +157,4 @@
         <label>{{row[col?.field] | flyDatePipe }}</label>
     </ng-template>
 
-    <ng-template #flyGridCellRemoveButtonTemplate
-                 let-col="col"
-                 let-row="row">
-        <button class="btn btn-danger btn-sm"
-                (click)="col.click(service, row)"
-                type="button">
-
-            <i class="fa fa-trash"></i>
-        </button>
-    </ng-template>
 </div>

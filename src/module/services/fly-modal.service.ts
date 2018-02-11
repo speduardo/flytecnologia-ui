@@ -23,6 +23,11 @@ export interface FlyModalCrudData {
     gridService: FlyService<any, any>;
 }
 
+
+export interface FlyModalSearchData {
+    autocompleteService: FlyService<any, any>;
+}
+
 export interface FlyModalRef {
     close(dialogResult?: any): void;
 

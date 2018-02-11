@@ -11,6 +11,10 @@ export class FlyUtilService {
 
     }
 
+    static fieldRequired(field: string): void {
+        throw new Error('Attribute \'' + field + '\' is required');
+    }
+
     static clone(obj: any): any {
         return _.cloneDeep(obj);
     }

@@ -1,6 +1,7 @@
-import { Component, ElementRef, Input, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, ElementRef, Input, OnInit, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
 import { NgModel } from '@angular/forms';
 import { TypeaheadMatch } from 'ngx-bootstrap';
+import { MatDialog } from '@angular/material';
 
 import { FlyUtilService } from '../../services/fly-util.service';
 import { FlyBaseInput } from '../base/fly-base-input';
@@ -30,29 +31,57 @@ export class FlyInputAutocompleteComponent extends FlyBaseInput implements OnIni
     @Input() placeholder = '';
     @Input() readonly = false;
     @Input() selectOnTab: boolean;
+    @Input() itemTemplate: TemplateRef<any>;
+
     @Input() service: FlyService<any, any>;
+    @Input() masterService: FlyService<any, any>;
 
     private _textTyped: string;
-    asyncSelected: string;
     typeaheadLoading: boolean;
     typeaheadNoResults: boolean;
     provider = [];
+
+    @ViewChild('originalItemTemplate')
+    originalItemTemplate: TemplateRef<any>;
 
     @ViewChild('inputHtml') inputHtml: ElementRef;
     @ViewChild('inputField') inputField: NgModel;
 
     constructor(private utilService: FlyUtilService,
-                private configService: FlyConfigService) {
+                private configService: FlyConfigService,
+                private dialog: MatDialog) {
         super(utilService);
 
         this.provider = Observable.create((observer: any) => {
             // Runs on every search
             observer.next(this.textTyped);
-        }).mergeMap((token: string) => this.service.autocomplete(token));
+        }).mergeMap((token: string) => this.service.getListAutocomplete(token));
     }
 
+    configSearchService() {
+        this.service.matDialogService = this.dialog;
+        this.service.onSetValueAutocomplete = (value) => this.onSetValueAutocomplete(value);
+
+        this.service.masterService = this.masterService;
+        this.service.masterService.cleanEvent.subscribe(
+            () => this.service.cleanEntity()
+        );
+    }
 
     ngOnInit(): void {
+        if (!this.masterService) {
+            FlyUtilService.fieldRequired('masterService');
+        }
+
+        if (!this.service) {
+            FlyUtilService.fieldRequired('service');
+        }
+
+        if (!this.itemTemplate) {
+            this.itemTemplate = this.originalItemTemplate;
+        }
+        this.configSearchService();
+
         super.ngOnInit();
     }
 
@@ -61,7 +90,7 @@ export class FlyInputAutocompleteComponent extends FlyBaseInput implements OnIni
     }
 
     openSearchPopup(): void {
-
+        this.service.openPopupSearchForm();
     }
 
     openCrudPopup(): void {
@@ -80,6 +109,10 @@ export class FlyInputAutocompleteComponent extends FlyBaseInput implements OnIni
         this.value = e.item[this.service.fieldValue];
     }
 
+    onClickClean() {
+        this.value = null;
+    }
+
     public get textTyped(): string {
         return this._textTyped;
     }
@@ -87,17 +120,71 @@ export class FlyInputAutocompleteComponent extends FlyBaseInput implements OnIni
     public set textTyped(value) {
         this._textTyped = value;
         this.value = null;
+        this.service.cleanEntity();
     }
 
     _blur($event: any) {
         super._blur($event);
 
         if (!this.value) {
-            this._textTyped = null;
+            this._textTyped = '';
         }
     }
 
-    onSetValue() {
-        console.log(this.value);
+    onSetValueAutocomplete(value: any): void {
+        this.value = value;
+    }
+
+    onSetValue(value: any) {
+        if (value) {
+            this.service.getItemAutocomplete(value)
+                .subscribe(
+                    response => {
+                        if (response) {
+                            this._textTyped = response[this.service.fieldDescription];
+                        } else {
+                            this.textTyped = '';
+                        }
+                    },
+                    () => {
+                        this.textTyped = '';
+                    });
+        }
+    }
+
+
+    hightlight(match: TypeaheadMatch, query: any): string {
+        let itemStr: string = match.value;
+        let itemStrHelper: string = (itemStr).toLowerCase();
+        let startIdx: number;
+        let tokenLen: number;
+        // Replaces the capture string with the same string inside of a "strong" tag
+        if (typeof query === 'object') {
+            const queryLen: number = query.length;
+            for (let i = 0; i < queryLen; i += 1) {
+                // query[i] is already latinized and lower case
+                startIdx = itemStrHelper.indexOf(query[i]);
+                tokenLen = query[i].length;
+                if (startIdx >= 0 && tokenLen > 0) {
+                    itemStr =
+                        `${itemStr.substring(0, startIdx)}<strong>${itemStr.substring(startIdx, startIdx + tokenLen)}</strong>` +
+                        `${itemStr.substring(startIdx + tokenLen)}`;
+                    itemStrHelper =
+                        `${itemStrHelper.substring(0, startIdx)}        ${' '.repeat(tokenLen)}         ` +
+                        `${itemStrHelper.substring(startIdx + tokenLen)}`;
+                }
+            }
+        } else if (query) {
+            // query is already latinized and lower case
+            startIdx = itemStrHelper.indexOf(query);
+            tokenLen = query.length;
+            if (startIdx >= 0 && tokenLen > 0) {
+                itemStr =
+                    `${itemStr.substring(0, startIdx)}<strong>${itemStr.substring(startIdx, startIdx + tokenLen)}</strong>` +
+                    `${itemStr.substring(startIdx + tokenLen)}`;
+            }
+        }
+
+        return itemStr;
     }
 }

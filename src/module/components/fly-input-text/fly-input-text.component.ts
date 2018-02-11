@@ -30,7 +30,7 @@ export class FlyInputTextComponent extends FlyBaseInput implements AfterViewInit
 
     @Input() precision: number;
     @Input() scale: number;
-    @Input() type: string;
+    @Input() type;
     @Input() maskValue: string;
     @Input() keepMask: boolean;
     @Input() allowNegativeValue: boolean;
@@ -46,6 +46,10 @@ export class FlyInputTextComponent extends FlyBaseInput implements AfterViewInit
 
     ngOnInit(): void {
         super.ngOnInit();
+
+        if (!this.type && !this.maxlength) {
+            FlyUtilService.fieldRequired('maxlength');
+        }
     }
 
     ngAfterViewInit(): void {

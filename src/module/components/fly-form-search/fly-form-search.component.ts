@@ -1,5 +1,7 @@
-import { AfterViewInit, Component, Input, OnInit, ViewEncapsulation } from '@angular/core';
+import { AfterViewInit, Component, Inject, Input, OnInit, Optional, ViewEncapsulation } from '@angular/core';
 import { FlyFormService } from '../service/fly-form.service';
+import { FlyModalSearchData } from '../../services/fly-modal.service';
+import { MAT_DIALOG_DATA } from '@angular/material';
 
 @Component({
     selector: 'fly-form-search',
@@ -10,13 +12,20 @@ import { FlyFormService } from '../service/fly-form.service';
 export class FlyFormSearchComponent extends FlyFormService implements OnInit, AfterViewInit {
     @Input() header: string;
 
-    constructor() {
+    constructor(@Optional() @Inject(MAT_DIALOG_DATA) public modalSearchData: FlyModalSearchData) {
         super();
     }
 
     ngOnInit() {
         this.service.showProgressbarGrid = false;
         this.service.isFormSearch = true;
+
+        this.service.masterService = this.modalSearchData ? this.modalSearchData.autocompleteService : null;
+        this.service.isPopup = !!this.service.masterService;
+
+        if (this.service.isPopup) {
+            this.service.modalSearchRef = this.service.masterService.modalSearchRef;
+        }
 
         this.service.loadDefaultValuesSearch().subscribe(
             () => {

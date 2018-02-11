@@ -26,9 +26,10 @@ export class FlyGridComponent implements OnInit {
     @Input() showAddButton = false;
     @Input() showRemoveButton = false;
     @Input() showPagination = false;
+    @Input() showFooter = false;
 
-   // @Input() watch = [];
-   // @Input() watchNonRequired = [];
+    // @Input() watch = [];
+    // @Input() watchNonRequired = [];
 
     @Input() gridHeight = '250px';
     @Input() labelAddButton = 'ADICIONAR';
@@ -42,14 +43,11 @@ export class FlyGridComponent implements OnInit {
     @ViewChild('flyGridCellTemplate')
     flyGridCellTemplate: TemplateRef<any>;
 
-    @ViewChild('flyGridCellEditButtonTemplate')
-    flyGridCellEditButtonTemplate: TemplateRef<any>;
-
-    @ViewChild('flyGridCellRemoveButtonTemplate')
-    flyGridCellRemoveButtonTemplate: TemplateRef<any>;
-
     @ViewChild('flyGridCellDateTemplate')
     flyGridCellDateTemplate: TemplateRef<any>;
+
+    @ViewChild('flyGridCellButtonTemplate')
+    flyGridCellButtonTemplate: TemplateRef<any>;
 
     constructor(private dialog: MatDialog) {
 
@@ -59,7 +57,7 @@ export class FlyGridComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.configServiceGrid();
+        this.configGridService();
         this.addDefaultColumns();
         this.onSearchOnStart();
     }
@@ -78,7 +76,7 @@ export class FlyGridComponent implements OnInit {
         }
     }
 
-    configServiceGrid() {
+    configGridService() {
         if (this.masterService) {
             /*all crud grids*/
             this.masterService.listNameEntityMasterPropertyList.push(this.service.entityMasterPropertyList);
@@ -97,6 +95,10 @@ export class FlyGridComponent implements OnInit {
     }
 
     addDefaultColumns() {
+        if (this.service.isFormSearch && this.service.isPopup) {
+            this.addSelectButtonColumn();
+        }
+
         if (this.showEditButton) {
             this.addEditButtonColumn();
         }
@@ -108,6 +110,20 @@ export class FlyGridComponent implements OnInit {
         this.service.columns = this.service.columnsAux;
     }
 
+    addSelectButtonColumn() {
+        this.service.addColumn({
+            field: 'id',
+            header: '',
+            sortable: false,
+            style: {'width': '55px'},
+            isButton: true,
+            iconButtonClass: 'fa-arrow-down',
+            buttonClass: 'btn-primary',
+            cellTemplate: this.flyGridCellButtonTemplate,
+            click: this.onSelectToAutocomplete
+        }, 0);
+    }
+
     addEditButtonColumn() {
         this.service.addColumn({
             field: 'id',
@@ -115,7 +131,9 @@ export class FlyGridComponent implements OnInit {
             sortable: false,
             style: {'width': '55px'},
             isButton: true,
-            cellTemplate: this.flyGridCellEditButtonTemplate,
+            iconButtonClass: 'fa-edit',
+            buttonClass: 'btn-primary',
+            cellTemplate: this.flyGridCellButtonTemplate,
             click: this.onEdit
         });
     }
@@ -127,9 +145,19 @@ export class FlyGridComponent implements OnInit {
             sortable: false,
             style: {'width': '55px'},
             isButton: true,
-            cellTemplate: this.flyGridCellRemoveButtonTemplate,
+            iconButtonClass: 'fa-trash',
+            buttonClass: 'btn-danger',
+            cellTemplate: this.flyGridCellButtonTemplate,
             click: this.$gridRemove
         });
+    }
+
+    dblclickItem(service, item): void {
+        this.onSelectToAutocomplete(service, item);
+    }
+
+    onSelectToAutocomplete(service, data) {
+        service.$gridSelectToAutocomplete(data);
     }
 
     onEdit(service, data) {
