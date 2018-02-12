@@ -5,7 +5,7 @@
     </div>
 
     <div *ngIf="isDefaultValuesAvalilable">
-        <div class="row fly-crud-row-header" >
+        <div class="row fly-crud-row-header">
             <div class="col-md-12">
                 <h4 class="fly-header">
                     <i class="fa fa-wpforms" style="margin-right: 5px"></i>
@@ -43,61 +43,68 @@
         <!--form.form.valid {{ flyForm.form.valid }}
 
         form.valid {{ flyForm.valid }}-->
+        <div class="cmark" #cmark></div>
+
+        <nav [ngClass]="{
+            'navbar fixed-bottom navbar-light bg-light': !isMarksInViewPort,
+            'fly-crud-row-header':isMarksInViewPort
+        }">
+
+            <div [ngClass]="{'cointainer-navbar': !isMarksInViewPort}">
+
+                <div class="row">
+                    <div class="col-md-12">
 
 
-        <div class="row">
-            <div class="col-md-12 fly-controlbar-crud">
-                <button mat-raised-button
-                        (click)="service.$crudSave(false, true)"
-                        color="primary"
-                        type="button"
-                        [disabled]="isDisabledButtons() || !flyForm.form.valid"
-                        *ngIf="service.isPopup"
-                        class="fly-btn-crud-save-clean">
-                    {{ labelSaveButton }} {{ labelSaveAndCleanButton }}
-                </button>
+                        <button mat-raised-button
+                                (click)="service.$crudSave(false, true)"
+                                color="primary"
+                                type="button"
+                                [disabled]="isDisabledButtons() || !flyForm.form.valid"
+                                *ngIf="service.isPopup"
+                                class="fly-btn-crud-save-clean">
+                            {{ labelSaveButton }} {{ labelSaveAndCleanButton }}
+                        </button>
 
-                <button mat-raised-button
-                        (click)="service.$crudSave(true)"
-                        color="primary"
-                        type="button"
-                        [disabled]="isDisabledButtons() || !flyForm.form.valid"
-                        *ngIf="service.isPopup"
-                        class="fly-btn-crud-save-exit">
-                    {{ labelSaveButton }} {{ labelSaveAndCloseButton }}
-                </button>
+                        <button mat-raised-button
+                                (click)="service.$crudSave(true)"
+                                color="primary"
+                                type="button"
+                                [disabled]="isDisabledButtons() || !flyForm.form.valid"
+                                *ngIf="service.isPopup"
+                                class="fly-btn-crud-save-exit">
+                            {{ labelSaveButton }} {{ labelSaveAndCloseButton }}
+                        </button>
 
-                <button mat-raised-button
-                        (click)="service.$crudSave()"
-                        color="primary"
-                        type="submit"
-                        [disabled]="isDisabledButtons() || !flyForm.form.valid">
-                    {{ labelSaveButton }}
-                </button>
+                        <button mat-raised-button
+                                (click)="service.$crudSave()"
+                                color="primary"
+                                type="submit"
+                                [disabled]="isDisabledButtons() || !flyForm.form.valid">
+                            {{ labelSaveButton }}
+                        </button>
 
-                <button mat-raised-button
-                        (click)="service.clean()"
-                        [disabled]="isDisabledButtons()"
-                        type="reset">
-                    {{ labelResetButton }}
-                </button>
+                        <button mat-raised-button
+                                (click)="service.clean()"
+                                [disabled]="isDisabledButtons()"
+                                type="reset">
+                            {{ labelResetButton }}
+                        </button>
 
-                <button mat-raised-button
-                        (click)="service.$crudRemove()"
-                        [disabled]="!service.entity.id || isDisabledButtons()"
-                        color="warn"
-                        type="button">
-                    {{ labelRemoveButton }}
-                </button>
-
-                <!--<span class="float-right"
-                      *ngIf="!!service.entity.id">
-                    Version: {{ service.entity.version }}
-                </span>-->
+                        <button mat-raised-button
+                                (click)="service.$crudRemove()"
+                                [disabled]="!service.entity.id || isDisabledButtons()"
+                                color="warn"
+                                type="button">
+                            {{ labelRemoveButton }}
+                        </button>
+                    </div>
+                </div>
+                <mat-progress-bar mode="indeterminate"
+                                  *ngIf="isDisabledButtons()">
+                </mat-progress-bar>
             </div>
-        </div>
-        <mat-progress-bar mode="indeterminate"
-                          *ngIf="isDisabledButtons()">
-        </mat-progress-bar>
+        </nav>
     </div>
+
 </form>

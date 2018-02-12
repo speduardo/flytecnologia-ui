@@ -1,4 +1,15 @@
-import { AfterViewInit, Component, Inject, Input, OnDestroy, OnInit, Optional, ViewEncapsulation } from '@angular/core';
+import {
+    AfterViewInit,
+    Component,
+    ElementRef,
+    Inject,
+    Input,
+    OnDestroy,
+    OnInit,
+    Optional,
+    ViewChild,
+    ViewEncapsulation
+} from '@angular/core';
 
 import { MAT_DIALOG_DATA } from '@angular/material';
 
@@ -7,6 +18,7 @@ import { Subscription } from 'rxjs/Subscription';
 import { FlyAlertService } from '../../services/fly-alert.service';
 import { FlyFormService } from '../service/fly-form.service';
 import { FlyModalCrudData } from '../../services/fly-modal.service';
+import { FlyUtilService } from '../../services/fly-util.service';
 
 @Component({
     selector: 'fly-form-crud',
@@ -15,16 +27,19 @@ import { FlyModalCrudData } from '../../services/fly-modal.service';
     encapsulation: ViewEncapsulation.None,
 })
 export class FlyFormCrudComponent extends FlyFormService implements OnInit, OnDestroy, AfterViewInit {
-    idSubscription: Subscription;
+    routerSubscription: Subscription;
+    scrollSubscription: Subscription;
 
-    labelSaveButton = 'SALVAR';
-    labelResetButton = 'LIMPAR';
-    labelRemoveButton = 'EXCLUIR';
-    labelSaveAndCloseButton = ' E FECHAR';
-    labelSaveAndCleanButton = ' E LIMPAR';
-
+    @Input() labelSaveButton = 'SALVAR';
+    @Input() labelResetButton = 'LIMPAR';
+    @Input() labelRemoveButton = 'EXCLUIR';
+    @Input() labelSaveAndCloseButton = ' E FECHAR';
+    @Input() labelSaveAndCleanButton = ' E LIMPAR';
     @Input() header: string;
 
+    @ViewChild('cmark') cmark: ElementRef;
+
+    isMarksInViewPort = true;
 
     constructor(private route: ActivatedRoute,
                 private router: Router,
@@ -37,7 +52,7 @@ export class FlyFormCrudComponent extends FlyFormService implements OnInit, OnDe
         const thisAux = this;
 
         if (!this.modalCrudData) {
-            this.idSubscription = this.route.params.subscribe(params => {
+            this.routerSubscription = this.route.params.subscribe(params => {
                 if (params['id']) {
                     thisAux.service.findById(Number(params['id'])).subscribe();
                 }
@@ -67,15 +82,36 @@ export class FlyFormCrudComponent extends FlyFormService implements OnInit, OnDe
                     this.service.onInitForm();
 
                     if (this.modalCrudData && this.modalCrudData.id) {
-                        thisAux.service.findById(this.modalCrudData.id).subscribe();
+                        thisAux.service.findById(this.modalCrudData.id).subscribe(
+                            () => this.checkControlbarFixed()
+                        );
                     }
+
+                    this.checkControlbarFixed();
                 });
             });
+
+        this.scrollSubscription = this.onMoveScrool()
+            .subscribe(() => this.checkControlbarFixed());
     }
 
-    ngOnDestroy() {
-        if (this.idSubscription) {
-            this.idSubscription.unsubscribe();
+    checkControlbarFixed(): void {
+        this.isMarksInViewPort = this.cmark && FlyUtilService.isInViewport(this.cmark.nativeElement);
+    }
+
+    ngAfterViewInit(): void {
+        super.ngAfterViewInit();
+
+        this.checkControlbarFixed();
+    }
+
+    ngOnDestroy(): void {
+        if (this.routerSubscription) {
+            this.routerSubscription.unsubscribe();
+        }
+
+        if (this.scrollSubscription) {
+            this.scrollSubscription.unsubscribe();
         }
     }
 
@@ -84,6 +120,8 @@ export class FlyFormCrudComponent extends FlyFormService implements OnInit, OnDe
             return false;
         }
 
-        return this.service.isSearching || this.service.isSaving || this.service.isRemoving;
+        return this.service.isSearching ||
+            this.service.isSaving ||
+            this.service.isRemoving;
     }
 }

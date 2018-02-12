@@ -2,6 +2,12 @@ import { AfterViewInit, ContentChildren, Input, QueryList, ViewChild } from '@an
 import { NgForm, NgModel } from '@angular/forms';
 
 import { FlyService } from '../../services/fly.service';
+import { Observable } from 'rxjs/Observable';
+
+import 'rxjs/add/observable/fromEvent';
+import 'rxjs/add/operator/throttleTime';
+import 'rxjs/add/operator/map';
+import 'rxjs/add/operator/do';
 
 export abstract class FlyFormService implements AfterViewInit {
     @ContentChildren(NgModel) public models: QueryList<NgModel>;
@@ -22,5 +28,13 @@ export abstract class FlyFormService implements AfterViewInit {
             });
 
         }, 100);
+
+    }
+
+    onMoveScrool(): Observable<boolean> {
+        return Observable
+            .fromEvent(window, 'scroll')
+            .throttleTime(100)
+            .map(Boolean);
     }
 }

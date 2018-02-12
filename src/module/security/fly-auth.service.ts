@@ -138,7 +138,7 @@ export class FlyAuthService {
     }
 
     isLogged(): boolean {
-        return this.jwtPayload != null && !this.isAccessTokenInvalid();
+        return this.jwtPayload != null;
     }
 
     isAccessTokenInvalid(accessToken: string = null): boolean {
