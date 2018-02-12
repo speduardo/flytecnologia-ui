@@ -1,6 +1,10 @@
 import { Component, ElementRef, Input, OnInit, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
 import { MatDialog } from '@angular/material';
 
+import * as _ from 'lodash';
+
+import { animate, keyframes, state, style, transition, trigger } from '@angular/animations';
+
 import { FlyService } from '../../services/fly.service';
 
 @Component({
@@ -8,10 +12,26 @@ import { FlyService } from '../../services/fly.service';
     templateUrl: './fly-grid.component.html',
     styleUrls: ['./fly-grid.component.scss'],
     encapsulation: ViewEncapsulation.None,
+    animations: [
+        trigger('row', [
+            state('ready', style({opacity: 1})),
+            transition('void => ready', animate('300ms 0s ease-in', keyframes([
+                style({opacity: 0, transform: 'translateX(-30px)', offset: 0}),
+                style({opacity: 0.8, transform: 'translateX(10px)', offset: 0.8}),
+                style({opacity: 1, transform: 'translateX(0px)', offset: 1})
+            ]))),
+            transition('ready => void', animate('300ms 0s ease-out', keyframes([
+                style({opacity: 1, transform: 'translateX(0px)', offset: 0}),
+                style({opacity: 0.8, transform: 'translateX(-10px)', offset: 0.2}),
+                style({opacity: 0, transform: 'translateX(30px)', offset: 1})
+            ])))
+        ])
+    ]
 })
 export class FlyGridComponent implements OnInit {
     smallnumPages = 0;
     selectionMode = 'single';
+    rowState = 'ready';
 
     @Input() service: FlyService<any, any>;
     @Input() masterService: FlyService<any, any>;
@@ -48,6 +68,8 @@ export class FlyGridComponent implements OnInit {
 
     @ViewChild('flyGridCellButtonTemplate')
     flyGridCellButtonTemplate: TemplateRef<any>;
+
+    private isAddedEditColumn = false;
 
     constructor(private dialog: MatDialog) {
 
@@ -136,6 +158,8 @@ export class FlyGridComponent implements OnInit {
             cellTemplate: this.flyGridCellButtonTemplate,
             click: this.onEdit
         });
+
+        this.isAddedEditColumn = true;
     }
 
     addRemoveButtonColumn() {
@@ -152,12 +176,20 @@ export class FlyGridComponent implements OnInit {
         });
     }
 
-    dblclickItem(service, item): void {
-        this.onSelectToAutocomplete(service, item);
+    dblclickItem(service, data): void {
+        if (!this.onSelectToAutocomplete(service, data)) {
+            this.onEditRecord(service, data);
+        }
     }
 
-    onSelectToAutocomplete(service, data) {
-        service.$gridSelectToAutocomplete(data);
+    onEditRecord(service, data): void {
+        if (this.isAddedEditColumn) {
+            this.onEdit(service, data);
+        }
+    }
+
+    onSelectToAutocomplete(service, data): boolean {
+        return service.$gridSelectToAutocomplete(data);
     }
 
     onEdit(service, data) {
@@ -177,5 +209,9 @@ export class FlyGridComponent implements OnInit {
     }
 
     pageChanged(event: any): void {
+    }
+
+    getNestedValue(obj: any, property: string) {
+        return _.get(obj, property);
     }
 }

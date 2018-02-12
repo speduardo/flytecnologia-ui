@@ -44,7 +44,7 @@
         </ng-template>
 
         <ng-template pTemplate="body" let-rowData let-columns="columns">
-            <tr>
+            <tr [@row]="rowState">
                 <td *ngIf="selectionMode==='multiple'">
                     <p-tableCheckbox [value]="rowData"></p-tableCheckbox>
                 </td>
@@ -58,7 +58,7 @@
                     </ng-container>
 
                     <ng-template #flyGridCellTemplate>
-                        <label>{{rowData[col?.field]}}</label>
+                        <label>{{getNestedValue(rowData,col?.field)}}</label>
                     </ng-template>
                 </td>
             </tr>
@@ -154,7 +154,7 @@
     <ng-template #flyGridCellDateTemplate
                  let-col="col"
                  let-row="row">
-        <label>{{row[col?.field] | flyDatePipe }}</label>
+        <label>{{getNestedValue(row,col?.field) | flyDatePipe }}</label>
     </ng-template>
 
 </div>

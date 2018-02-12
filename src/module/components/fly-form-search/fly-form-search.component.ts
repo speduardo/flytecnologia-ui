@@ -25,6 +25,8 @@ export class FlyFormSearchComponent extends FlyFormService implements OnInit, Af
 
         if (this.service.isPopup) {
             this.service.modalSearchRef = this.service.masterService.modalSearchRef;
+            this.service.isPopupCrudDetail = this.service.masterService.masterService &&
+                this.service.masterService.masterService.isPopupCrudDetail;
         }
 
         this.service.loadDefaultValuesSearch().subscribe(

@@ -1,5 +1,6 @@
 import { ControlValueAccessor, NG_VALIDATORS, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { EventEmitter, forwardRef, Input, Output } from '@angular/core';
+import { FlyNgModelExtra } from '../interface/fly-ng-model-extra';
 
 /*
 +------------------------------------+----------------------+
@@ -15,8 +16,12 @@ import { EventEmitter, forwardRef, Input, Output } from '@angular/core';
 */
 export abstract class FlyAbstractNgModel<T> implements ControlValueAccessor {
     @Output() ngModelChange: EventEmitter<any> = new EventEmitter(false);
-
+    @Input() ngModelExtra: Array<FlyNgModelExtra> = [];
+    @Input() ngModelClean: Array<FlyNgModelExtra> = [];
     @Input() disabled = false;
+
+    public ignoreEqualValue = true;
+
     private _value: T;
 
     // Function to call when the rating changes.
@@ -32,10 +37,39 @@ export abstract class FlyAbstractNgModel<T> implements ControlValueAccessor {
     }
 
     public set value(value: T) {
+        const oldValue = this._value;
+
+        if (this.ignoreEqualValue && oldValue === value) {
+            return;
+        }
+
         value = this.checkValue(value);
         this._value = value;
         this.onSetValue(value);
         this.onChange(value);
+        this.setNgModelExtra(value);
+        this.setNgModelClean(value);
+    }
+
+    public setNgModelExtra(value) {
+        if (this.ngModelExtra.length) {
+            this.ngModelExtra.forEach((item: FlyNgModelExtra) => {
+                item.o[item.p] = value;
+            });
+        }
+    }
+
+
+    public setNgModelClean(value) {
+        if (value) {
+            return;
+        }
+
+        if (this.ngModelClean.length) {
+            this.ngModelClean.forEach((item: FlyNgModelExtra) => {
+                item.o[item.p] = null;
+            });
+        }
     }
 
     public onSetValue(value: T): void {

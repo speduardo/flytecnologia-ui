@@ -98,3 +98,36 @@ label {
         margin-bottom: 5px !important;
     }
 }
+
+@media (min-width: 1200px) {
+    .container {
+        max-width: 1140px !important;
+    }
+}
+
+pre span {
+    white-space: normal;
+}
+
+pre {
+
+    .string {
+        color: green;
+    }
+
+    .number {
+        color: darkorange;
+    }
+
+    .boolean {
+        color: blue;
+    }
+
+    .null {
+        color: magenta;
+    }
+
+    .key {
+        color: red;
+    }
+}

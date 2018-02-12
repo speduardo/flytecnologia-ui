@@ -40,6 +40,10 @@ export class FlyInputTextComponent extends FlyBaseInput implements AfterViewInit
 
     @ViewChild('inputField') inputField: NgModel;
 
+    emailPattern = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
+
+    numberPattern = /^[0-9]*$/;
+
     constructor(private flyUtilService: FlyUtilService) {
         super(flyUtilService);
     }

@@ -21,7 +21,7 @@ export class FlyUtilService {
 
     static convertNullValuesToNewInstanceOfEntity(entity: FlyEntity, emptyEntity: FlyEntity): FlyEntity {
         if (entity == null) {
-            return Object.create(emptyEntity);
+            return FlyUtilService.clone(emptyEntity);
         }
 
         const props = Object.getOwnPropertyNames(emptyEntity);
@@ -30,7 +30,7 @@ export class FlyUtilService {
             if ((emptyEntity[prop] instanceof FlyEntityImpl || emptyEntity[prop] instanceof FlyEmbeddedEntity)) {
 
                 if (!entity[prop]) {
-                    entity[prop] = Object.assign({}, emptyEntity[prop]);
+                    entity[prop] = FlyUtilService.clone(emptyEntity[prop]);
                 }
 
                 this.convertNullValuesToNewInstanceOfEntity(entity[prop], emptyEntity[prop]);
@@ -89,6 +89,4 @@ export class FlyUtilService {
 
         return value.toString().toLowerCase() === 'false';
     }
-
-
 }

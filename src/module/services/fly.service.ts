@@ -1,4 +1,4 @@
-import { NgForm } from '@angular/forms';
+import { NgForm, NgModel } from '@angular/forms';
 import { ElementRef, EventEmitter } from '@angular/core';
 import { HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
@@ -28,6 +28,7 @@ export abstract class FlyService<T extends FlyEntity, F extends FlyFilter> {
     isRemoving = false;
     isPrinting = false;
     isPopup = false;
+    isPopupCrudDetail = false;
     urlRouter: string;
     isFormSearch = false;
     isDefaultValuesLoaded = false;
@@ -52,6 +53,7 @@ export abstract class FlyService<T extends FlyEntity, F extends FlyFilter> {
     /*form crud*/
 
     /*grid*/
+    selectedItem: any;
     showProgressbarGrid = true;
     itemsPerPage = 10;
     totalElements = 0;
@@ -67,13 +69,15 @@ export abstract class FlyService<T extends FlyEntity, F extends FlyFilter> {
 
     /*autocomplete*/
     modalSearchRef: FlyModalRef;
-    seachFormComponent: any;
+    searchFormComponent: any;
     itemsAutocomplete = [];
     methodNameAutocomplete = 'getListAutocomplete';
     methodNameItemAutocomplete = 'getItemAutocomplete';
     fieldDescription: string;
     fieldValue = 'id';
     extraFieldsAutocomplete: string;
+    inputHtml: ElementRef;
+    inputField: NgModel;
     /*autocomplete*/
 
     private _emptyEntity: T;
@@ -204,8 +208,7 @@ export abstract class FlyService<T extends FlyEntity, F extends FlyFilter> {
     }
 
     private addMasterEntityInDetailEntity(): void {
-        if (!this.isPopup || !this.gridMasterService ||
-            !this.gridMasterService.masterService) {
+        if (!this.isPopupCrudDetail) {
             return;
         }
 
@@ -216,8 +219,7 @@ export abstract class FlyService<T extends FlyEntity, F extends FlyFilter> {
     }
 
     searchGridCrud(): void {
-        if (!this.isPopup || !this.gridMasterService ||
-            !this.gridMasterService.masterService) {
+        if (!this.isPopupCrudDetail) {
             return;
         }
 
@@ -231,8 +233,7 @@ export abstract class FlyService<T extends FlyEntity, F extends FlyFilter> {
 
     save(showMessage: boolean = false, goToEditPage: boolean = false): Observable<T> {
         return new Observable(observer => {
-            if (this.isPopup && this.gridMasterService &&
-                this.gridMasterService.masterService &&
+            if (this.isPopupCrudDetail &&
                 !this.gridMasterService.masterService.entity.id) {
 
                 this.isSaving = true;
@@ -296,7 +297,7 @@ export abstract class FlyService<T extends FlyEntity, F extends FlyFilter> {
                             } else {
                                 this.entity = this.checkValues(response);
 
-                                if (this.isPopup) {
+                                if (this.isPopupCrudDetail) {
                                     this.searchGridCrud();
                                 }
                             }
@@ -409,12 +410,17 @@ export abstract class FlyService<T extends FlyEntity, F extends FlyFilter> {
 
             this.isSearching = true;
 
-            params.value = value;
-            params.fieldValue = this.fieldValue;
-            params.fieldDescription = this.fieldDescription;
-            params.extraFieldsAutocomplete = this.extraFieldsAutocomplete;
+            let paramsAux = this.prepareParameters(params);
+            paramsAux = paramsAux.set('acValue', value);
+            paramsAux = paramsAux.set('acFieldValue', this.fieldValue);
+            paramsAux = paramsAux.set('acFieldDescription', this.fieldDescription);
 
-            this.http.get(`${this.getUrlBase()}/${this.methodNameAutocomplete}`, {params: params})
+            if (this.extraFieldsAutocomplete) {
+                paramsAux = paramsAux.set('acExtraFieldsAutocomplete', this.extraFieldsAutocomplete);
+            }
+
+            this.http.get(`${this.getUrlBase()}/${this.methodNameAutocomplete}`,
+                {params: paramsAux})
                 .debounceTime(400)
                 .distinctUntilChanged()
                 .subscribe((data) => {
@@ -437,12 +443,16 @@ export abstract class FlyService<T extends FlyEntity, F extends FlyFilter> {
         });
     }
 
-    prepareParameters(params): void {
-        _.forEach(params, function (value, key) {
-            if (!params[key]) {
-                delete params[key];
+    prepareParameters(params: any, httpParams: HttpParams = null): HttpParams {
+        let paramsAux = httpParams || new HttpParams();
+
+        _.forEach(params, (value, key) => {
+            if (value) {
+                paramsAux = paramsAux.set(key, value);
             }
         });
+
+        return paramsAux;
     }
 
     getItemAutocomplete(value: null, params: any = this.parameters): Observable<any> {
@@ -450,15 +460,17 @@ export abstract class FlyService<T extends FlyEntity, F extends FlyFilter> {
 
             this.isSearching = true;
 
-            params.id = value;
-            params.fieldValue = this.fieldValue;
-            params.fieldDescription = this.fieldDescription;
-            params.extraFieldsAutocomplete = this.extraFieldsAutocomplete ? this.extraFieldsAutocomplete : null;
+            let paramsAux = this.prepareParameters(params);
+            paramsAux = paramsAux.set('id', value);
+            paramsAux = paramsAux.set('acFieldValue', this.fieldValue);
+            paramsAux = paramsAux.set('acFieldDescription', this.fieldDescription);
 
-            this.prepareParameters(params);
+            if (this.extraFieldsAutocomplete) {
+                paramsAux = paramsAux.set('acExtraFieldsAutocomplete', this.extraFieldsAutocomplete);
+            }
 
             this.http.get(`${this.getUrlBase()}/${this.methodNameItemAutocomplete}`,
-                {params: params})
+                {params: paramsAux})
                 .distinctUntilChanged()
                 .subscribe((data) => {
                     this.isSearching = false;
@@ -509,7 +521,7 @@ export abstract class FlyService<T extends FlyEntity, F extends FlyFilter> {
             return;
         }
 
-        this.entity = Object.create(this._emptyEntity);
+        this.entity = FlyUtilService.clone(this._emptyEntity);
 
         this.onSetValueAutocomplete(null);
     }
@@ -519,10 +531,8 @@ export abstract class FlyService<T extends FlyEntity, F extends FlyFilter> {
             return;
         }
 
-        const props = Object.getOwnPropertyNames(this.filter);
-
-        props.forEach((prop) => {
-            this.filter[prop] = '';
+        _.forEach(this.filter, (value, key) => {
+            this.filter[key] = '';
         });
 
         this.filter.size = this.itemsPerPage;
@@ -534,31 +544,27 @@ export abstract class FlyService<T extends FlyEntity, F extends FlyFilter> {
         return this.search(filter);
     }
 
-    search(filter: FlyFilter = this.getFilter()): Observable<any[]> {
+    search(filter: FlyFilter = this.getFilter(), parameters: any = this.parameters): Observable<any[]> {
         if (this.showAllRecordsOnSearch) {
             filter.page = 99999999;
         }
 
         filter.size = this.itemsPerPage;
 
-        let params = new HttpParams();
-
-        const props = Object.getOwnPropertyNames(filter);
-
         const page = filter.page !== -1 ? (filter.page > 0 ? (filter.page - 1) : 0) : -1;
 
-        props.forEach((prop) => {
-            if (prop === 'page') {
-                params = params.set(prop, !!page ? page.toString() : '');
-            } else {
-                params = params.set(prop, !!filter[prop] ? filter[prop].toString() : '');
-            }
-        });
+        let paramsFilter: HttpParams = this.prepareParameters(filter);
+        paramsFilter = paramsFilter.set('page', !!page ? page.toString() : '');
+        paramsFilter = this.prepareParameters(parameters, paramsFilter);
+
+        if (this.isFormSearch && this.isPopup && this.masterService) {
+            paramsFilter = this.prepareParameters(this.masterService.parameters, paramsFilter);
+        }
 
         return new Observable(observer => {
             this.isSearching = true;
 
-            this.http.get(`${this.getUrlBase()}`, {params: params})
+            this.http.get(`${this.getUrlBase()}`, {params: paramsFilter})
                 .subscribe((data) => {
                     this.definePaginationValues(data);
                     this.isSearching = false;
@@ -639,11 +645,6 @@ export abstract class FlyService<T extends FlyEntity, F extends FlyFilter> {
         })
         ;
 
-        /* const dialogRef: FlyModalRef = this.modalService.open(this.service.crudFormComponent, {
-             id: id,
-             gridService: this.service
-         });*/
-
         this.modalCrudRef.afterClosed().subscribe((result) => {
             return result;
         });
@@ -700,12 +701,22 @@ export abstract class FlyService<T extends FlyEntity, F extends FlyFilter> {
         }
     }
 
-    $gridSelectToAutocomplete(data) {
+    $gridSelectToAutocomplete(data): boolean {
         if (this.isPopup && !!data && data[this.masterService.fieldValue]) {
             this.masterService.cleanEntity();
-            this.masterService.onSetValueAutocomplete(data[this.masterService.fieldValue]);
+
+            if (this.isPopupCrudDetail && !this.masterService.masterService.entity.id) {
+                this.masterService.onSetValueAutocomplete(data[this.masterService.fieldValue], data);
+            } else {
+                this.masterService.onSetValueAutocomplete(data[this.masterService.fieldValue]);
+            }
+
             this.closePopup();
+
+            return true;
         }
+
+        return false;
     }
 
     /*end grid methods*/
@@ -714,9 +725,9 @@ export abstract class FlyService<T extends FlyEntity, F extends FlyFilter> {
     /*start crud methods*/
 
     $crudSave(existOnSaveIfPopup: boolean = false, cleanOnSaveIfPopup: boolean = false): void {
-        this.save(true, !this.isPopup).subscribe(
+        this.save(true, !this.isPopupCrudDetail).subscribe(
             () => {
-                if (this.isPopup) {
+                if (this.isPopupCrudDetail) {
                     if (existOnSaveIfPopup) {
                         this.closePopup();
                     } else if (cleanOnSaveIfPopup) {
@@ -733,7 +744,7 @@ export abstract class FlyService<T extends FlyEntity, F extends FlyFilter> {
         this.remove(this.entity.id).subscribe(() => {
             this.getAlertService().success('Registro removido com sucesso!');
 
-            if (!this.isPopup) {
+            if (!this.isPopupCrudDetail) {
                 this.goToNew();
             } else {
                 this.searchGridCrud();
@@ -745,7 +756,7 @@ export abstract class FlyService<T extends FlyEntity, F extends FlyFilter> {
     /*end crud methods*/
 
     /*start autocomplete methods*/
-    onSetValueAutocomplete(value: any) {
+    onSetValueAutocomplete(value: any, entity: any = null) {
 
     }
 
@@ -754,7 +765,7 @@ export abstract class FlyService<T extends FlyEntity, F extends FlyFilter> {
             autocompleteService: this
         };
 
-        this.modalSearchRef = this.matDialogService.open(this.seachFormComponent, {
+        this.modalSearchRef = this.matDialogService.open(this.searchFormComponent, {
             panelClass: 'container',
             data: data
         })

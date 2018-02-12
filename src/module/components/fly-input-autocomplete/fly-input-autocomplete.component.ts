@@ -9,6 +9,7 @@ import { ngModelProvider } from '../base/fly-abstract-ng-model';
 import { FlyConfigService } from '../../confg/fly-config.service';
 import { FlyService } from '../../services/fly.service';
 import { Observable } from 'rxjs/Observable';
+import { FlyEntity } from '../../services/entity/fly-entity';
 
 
 let nextUniqueId = 0;
@@ -32,11 +33,12 @@ export class FlyInputAutocompleteComponent extends FlyBaseInput implements OnIni
     @Input() readonly = false;
     @Input() selectOnTab: boolean;
     @Input() itemTemplate: TemplateRef<any>;
-
+    @Input() entityModel: FlyEntity;
     @Input() service: FlyService<any, any>;
     @Input() masterService: FlyService<any, any>;
 
     private _textTyped: string;
+
     typeaheadLoading: boolean;
     typeaheadNoResults: boolean;
     provider = [];
@@ -60,7 +62,7 @@ export class FlyInputAutocompleteComponent extends FlyBaseInput implements OnIni
 
     configSearchService() {
         this.service.matDialogService = this.dialog;
-        this.service.onSetValueAutocomplete = (value) => this.onSetValueAutocomplete(value);
+        this.service.onSetValueAutocomplete = (value, entity) => this.onSetValueAutocomplete(value, entity);
 
         this.service.masterService = this.masterService;
         this.service.masterService.cleanEvent.subscribe(
@@ -71,6 +73,10 @@ export class FlyInputAutocompleteComponent extends FlyBaseInput implements OnIni
     ngOnInit(): void {
         if (!this.masterService) {
             FlyUtilService.fieldRequired('masterService');
+        } else {
+            if (!this.entityModel && this.masterService.isPopupCrudDetail) {
+                FlyUtilService.fieldRequired('entityModel');
+            }
         }
 
         if (!this.service) {
@@ -80,6 +86,10 @@ export class FlyInputAutocompleteComponent extends FlyBaseInput implements OnIni
         if (!this.itemTemplate) {
             this.itemTemplate = this.originalItemTemplate;
         }
+
+        this.service.inputField = this.inputField;
+        this.service.inputHtml = this.inputHtml;
+
         this.configSearchService();
 
         super.ngOnInit();
@@ -131,11 +141,21 @@ export class FlyInputAutocompleteComponent extends FlyBaseInput implements OnIni
         }
     }
 
-    onSetValueAutocomplete(value: any): void {
+    onSetValueAutocomplete(value: any, entity: any = null): void {
         this.value = value;
+
+        if (entity) {
+            if (!this.entityModel) {
+                FlyUtilService.fieldRequired('entityModel');
+            }
+            /*_.merge(this.entityModel, entity);*/
+            this.entityModel[this.service.fieldDescription] = entity[this.service.fieldDescription];
+        }
     }
 
     onSetValue(value: any) {
+        console.log(value);
+
         if (value) {
             this.service.getItemAutocomplete(value)
                 .subscribe(
@@ -151,7 +171,6 @@ export class FlyInputAutocompleteComponent extends FlyBaseInput implements OnIni
                     });
         }
     }
-
 
     hightlight(match: TypeaheadMatch, query: any): string {
         let itemStr: string = match.value;

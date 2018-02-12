@@ -1,5 +1,5 @@
 import { ErrorHandler, ModuleWithProviders, NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, JsonPipe } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {
     MatButtonModule,
@@ -21,6 +21,8 @@ import { PaginationModule } from 'ngx-bootstrap/pagination';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { TypeaheadModule } from 'ngx-bootstrap/typeahead';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
+
+import { PrettyJsonModule } from 'angular2-prettyjson';
 
 import 'hammerjs';
 
@@ -137,6 +139,7 @@ export * from './security/fly-jwt.service';
         BsDatepickerModule.forRoot(),
         TypeaheadModule.forRoot(),
         BsDropdownModule.forRoot(),
+        PrettyJsonModule,
         FlySecurityModule
     ],
     declarations: [
@@ -186,6 +189,7 @@ export * from './security/fly-jwt.service';
         BsDatepickerModule,
         TypeaheadModule,
         BsDropdownModule,
+        PrettyJsonModule,
         FlyLegendComponent,
         FlyHrComponent,
         FlyTabsetComponent,

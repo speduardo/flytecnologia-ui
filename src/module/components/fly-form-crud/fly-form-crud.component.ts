@@ -48,8 +48,9 @@ export class FlyFormCrudComponent extends FlyFormService implements OnInit, OnDe
 
         this.service.gridMasterService = this.modalCrudData ? this.modalCrudData.gridService : null;
         this.service.isPopup = !!this.service.gridMasterService;
+        this.service.isPopupCrudDetail = !!this.service.gridMasterService;
 
-        if (this.service.isPopup) {
+        if (this.service.isPopupCrudDetail) {
             this.service.modalCrudRef = this.service.gridMasterService.modalCrudRef;
 
             if (!this.service.gridMasterService.masterService.entity.id) {
