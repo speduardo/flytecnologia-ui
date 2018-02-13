@@ -62,7 +62,7 @@
                                 color="primary"
                                 type="button"
                                 [disabled]="isDisabledButtons() || !flyForm.form.valid"
-                                *ngIf="service.isPopup"
+                                *ngIf="service.isPopupCrudDetail"
                                 class="fly-btn-crud-save-clean">
                             {{ labelSaveButton }} {{ labelSaveAndCleanButton }}
                         </button>
@@ -81,7 +81,8 @@
                                 (click)="service.$crudSave()"
                                 color="primary"
                                 type="submit"
-                                [disabled]="isDisabledButtons() || !flyForm.form.valid">
+                                [disabled]="isDisabledButtons() || !flyForm.form.valid"
+                                *ngIf="!service.isPopup || (!service.isPopupCrudAutoComplete && !(service.isPopupCrudDetail && !service.gridMasterService.masterService.entity.id))">
                             {{ labelSaveButton }}
                         </button>
 

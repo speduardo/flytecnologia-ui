@@ -21,6 +21,7 @@ export class FlyModalService {
 export interface FlyModalCrudData {
     id: number;
     gridService: FlyService<any, any>;
+    autocompleteService: FlyService<any, any>;
 }
 
 

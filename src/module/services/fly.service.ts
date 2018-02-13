@@ -29,6 +29,7 @@ export abstract class FlyService<T extends FlyEntity, F extends FlyFilter> {
     isPrinting = false;
     isPopup = false;
     isPopupCrudDetail = false;
+    isPopupCrudAutoComplete = false;
     urlRouter: string;
     isFormSearch = false;
     isDefaultValuesLoaded = false;
@@ -38,6 +39,7 @@ export abstract class FlyService<T extends FlyEntity, F extends FlyFilter> {
 
     customHeadersToSave: HttpHeaders = new HttpHeaders();
 
+    autoCompleteMasterService: FlyService<any, any>;
     gridMasterService: FlyService<any, any>;
     masterService: FlyService<any, any>;
     matDialogService: MatDialog;
@@ -70,6 +72,7 @@ export abstract class FlyService<T extends FlyEntity, F extends FlyFilter> {
     /*grid*/
 
     /*autocomplete*/
+    isAutoComplete: boolean;
     modalSearchRef: FlyModalRef;
     searchFormComponent: any;
     itemsAutocomplete = [];
@@ -649,17 +652,13 @@ export abstract class FlyService<T extends FlyEntity, F extends FlyFilter> {
     openPopupCrudForm(id: number = null): void {
         const data: FlyModalCrudData = {
             id: id,
-            gridService: this
+            gridService: this.isAutoComplete ? null : this,
+            autocompleteService: this.isAutoComplete ? this : null
         };
 
         this.modalCrudRef = this.matDialogService.open(this.crudFormComponent, {
             panelClass: 'container',
             data: data
-        })
-        ;
-
-        this.modalCrudRef.afterClosed().subscribe((result) => {
-            return result;
         });
     }
 
@@ -738,8 +737,8 @@ export abstract class FlyService<T extends FlyEntity, F extends FlyFilter> {
     /*start crud methods*/
 
     $crudSave(existOnSaveIfPopup: boolean = false, cleanOnSaveIfPopup: boolean = false): void {
-        this.save(true, !this.isPopupCrudDetail).subscribe(
-            () => {
+        this.save(true, !this.isPopup).subscribe(
+            (entity) => {
                 if (this.isPopupCrudDetail) {
                     if (existOnSaveIfPopup) {
                         this.closePopup();
@@ -748,6 +747,10 @@ export abstract class FlyService<T extends FlyEntity, F extends FlyFilter> {
                     }
 
                     this.searchGridCrud();
+                } else if (this.isPopupCrudAutoComplete) {
+                    this.autoCompleteMasterService.onSetValueAutocomplete(null, null);
+                    this.autoCompleteMasterService.onSetValueAutocomplete(entity[this.fieldValue], null);
+                    this.closePopup();
                 }
             }
         );
@@ -757,11 +760,14 @@ export abstract class FlyService<T extends FlyEntity, F extends FlyFilter> {
         this.remove(this.entity.id).subscribe(() => {
             this.getAlertService().success('Registro removido com sucesso!');
 
-            if (!this.isPopupCrudDetail) {
-                this.goToNew();
-            } else {
+            if (this.isPopupCrudDetail) {
                 this.searchGridCrud();
                 this.closePopup();
+            } else if (this.isPopupCrudAutoComplete) {
+                this.autoCompleteMasterService.onSetValueAutocomplete(null, null);
+                this.closePopup();
+            } else {
+                this.goToNew();
             }
         });
     }
@@ -789,9 +795,6 @@ export abstract class FlyService<T extends FlyEntity, F extends FlyFilter> {
              gridService: this.service
          });*/
 
-        this.modalSearchRef.afterClosed().subscribe((result) => {
-            return result;
-        });
     }
 
     /*end autocomplete methods*/

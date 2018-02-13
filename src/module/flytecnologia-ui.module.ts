@@ -21,6 +21,7 @@ import { PaginationModule } from 'ngx-bootstrap/pagination';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { TypeaheadModule } from 'ngx-bootstrap/typeahead';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
+import { ModalModule } from 'ngx-bootstrap/modal';
 
 import { PrettyJsonModule } from 'angular2-prettyjson';
 
@@ -154,6 +155,7 @@ export * from './security/fly-jwt.service';
         BsDatepickerModule.forRoot(),
         TypeaheadModule.forRoot(),
         BsDropdownModule.forRoot(),
+        ModalModule.forRoot(),
         PrettyJsonModule,
         FlySecurityModule
     ],
@@ -211,6 +213,7 @@ export * from './security/fly-jwt.service';
         BsDatepickerModule,
         TypeaheadModule,
         BsDropdownModule,
+        ModalModule,
         PrettyJsonModule,
         FlyLegendComponent,
         FlyHrComponent,

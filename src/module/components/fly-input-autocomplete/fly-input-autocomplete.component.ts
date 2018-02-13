@@ -61,6 +61,7 @@ export class FlyInputAutocompleteComponent extends FlyBaseInput implements OnIni
     }
 
     configSearchService() {
+        this.service.isAutoComplete = true;
         this.service.matDialogService = this.dialog;
         this.service.onSetValueAutocomplete = (value, entity) => this.onSetValueAutocomplete(value, entity);
 
@@ -104,7 +105,7 @@ export class FlyInputAutocompleteComponent extends FlyBaseInput implements OnIni
     }
 
     openCrudPopup(): void {
-
+        this.service.openPopupCrudForm(this.value);
     }
 
     changeTypeaheadLoading(e: boolean): void {

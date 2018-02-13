@@ -60,8 +60,10 @@ export class FlyFormCrudComponent extends FlyFormService implements OnInit, OnDe
             this.service.isFormCrud = true;
 
             this.service.gridMasterService = this.modalCrudData ? this.modalCrudData.gridService : null;
-            this.service.isPopup = !!this.service.gridMasterService;
+            this.service.autoCompleteMasterService = this.modalCrudData ? this.modalCrudData.autocompleteService : null;
             this.service.isPopupCrudDetail = !!this.service.gridMasterService;
+            this.service.isPopupCrudAutoComplete = !!this.service.autoCompleteMasterService;
+            this.service.isPopup = this.service.isPopupCrudDetail || this.service.isPopupCrudAutoComplete;
 
             if (this.service.isPopupCrudDetail) {
                 this.service.modalCrudRef = this.service.gridMasterService.modalCrudRef;
@@ -69,6 +71,8 @@ export class FlyFormCrudComponent extends FlyFormService implements OnInit, OnDe
                 if (!this.service.gridMasterService.masterService.entity.id) {
                     this.labelSaveButton = 'ADICIONAR';
                 }
+            } else if (this.service.isPopupCrudAutoComplete) {
+                this.service.modalCrudRef = this.service.autoCompleteMasterService.modalCrudRef;
             }
         }, 0);
 
