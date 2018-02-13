@@ -1,67 +1,68 @@
 <form novalidate #flyForm="ngForm"
       class="fly-form">
-    <div *ngIf="!isDefaultValuesAvalilable">
+    <div *ngIf="!isDefaultValuesAvalilable; else formSearchLoaded">
         Carregando...
     </div>
-
-    <div *ngIf="isDefaultValuesAvalilable">
-        <div class="row fly-header-row-header">
-            <div class="col-md-12">
-                <h4 class="fly-header">
-                    <i class="fa fa-search" style="margin-right: 5px"></i>
-                    <span class="fly-header-effect">{{ header }}</span>
-                    <button mat-fab color="accent"
-                            [routerLink]="['new']"
-                            class="float-right"
-                            *ngIf="!service.isPopup"
-                            type="button"
-                            style="margin-top:-18px;">
-                        <mat-icon aria-label="New"
-                                  fontSet="fa"
-                                  fontIcon="fa-plus"></mat-icon>
-                    </button>
-
-                    <button mat-icon-button
-                            (click)="service.closePopup()"
-                            class="float-right fly-close-modal"
-                            type="button"
-                            *ngIf="service.isPopup"
-                            tabindex="-1">
-                        <i class="fa fa-times fa-2x"></i>
-                    </button>
-                </h4>
-            </div>
-        </div>
-
-        <ng-content select="[body]">
-        </ng-content>
-
-        <div class="row">
-            <div class="col-md-12">
-                <fly-controlbar>
-                    <button mat-raised-button
-                            (click)="search()"
-                            color="primary"
-                            type="submit"
-                            [disabled]="service.isSearching || !flyForm.form.valid">
-                        Pesquisar
-                    </button>
-
-                    <button mat-raised-button
-                            type="reset"
-                            (click)="clean()">
-                        Limpar
-                    </button>
-
-                    <!--<button mat-raised-button
-                            [routerLink]="['new']"
-                            color="primary"
-                            class="float-right">
-                        Adicionar
-                    </button>-->
-                </fly-controlbar>
-            </div>
-        </div>
-        <ng-content select="[footer]"></ng-content>
-    </div>
 </form>
+
+<ng-template #formSearchLoaded>
+    <div class="row fly-header-row-header">
+        <div class="col-md-12">
+            <h4 class="fly-header">
+                <i class="fa fa-search" style="margin-right: 5px"></i>
+                <span class="fly-header-effect">{{ header }}</span>
+                <button mat-fab color="accent"
+                        [routerLink]="['new']"
+                        class="float-right"
+                        *ngIf="!service.isPopup"
+                        type="button"
+                        style="margin-top:-18px;">
+                    <mat-icon aria-label="New"
+                              fontSet="fa"
+                              fontIcon="fa-plus"></mat-icon>
+                </button>
+
+                <button mat-icon-button
+                        (click)="service.closePopup()"
+                        class="float-right fly-close-modal"
+                        type="button"
+                        *ngIf="service.isPopup"
+                        tabindex="-1">
+                    <i class="fa fa-times fa-2x"></i>
+                </button>
+            </h4>
+        </div>
+    </div>
+
+    <ng-content select="[body]">
+    </ng-content>
+
+    <div class="row">
+        <div class="col-md-12 fly-line-button">
+            <fly-controlbar>
+                <button mat-raised-button
+                        (click)="search()"
+                        color="primary"
+                        type="submit"
+                        [disabled]="service.isSearching || !flyForm.form.valid">
+                    Pesquisar
+                </button>
+
+                <button mat-raised-button
+                        color="accent"
+                        type="reset"
+                        (click)="clean()">
+                    Limpar
+                </button>
+
+                <!--<button mat-raised-button
+                        [routerLink]="['new']"
+                        color="primary"
+                        class="float-right">
+                    Adicionar
+                </button>-->
+            </fly-controlbar>
+        </div>
+    </div>
+    <ng-content select="[footer]"></ng-content>
+</ng-template>

@@ -2,9 +2,9 @@
 @import '../../../../theming';
 
 .fly-controlbar {
-    border: 1px solid mat-color($candy-app-primary, 500);
-    border-left: 6px solid mat-color($candy-app-primary, 500);
-    border-right: 6px solid mat-color($candy-app-primary, 500);
+    border: 1px solid $primaryColor;
+    border-left: 6px solid $primaryColor;
+    border-right: 6px solid $primaryColor;
     padding-left: 15px;
     padding-right: 15px;
     padding-top: 10px;

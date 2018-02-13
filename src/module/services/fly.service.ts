@@ -657,6 +657,7 @@ export abstract class FlyService<T extends FlyEntity, F extends FlyFilter> {
         };
 
         this.modalCrudRef = this.matDialogService.open(this.crudFormComponent, {
+            //height: (FlyUtilService.viewPortSize - 100) + 'px',
             panelClass: 'container',
             data: data
         });

@@ -7,6 +7,8 @@ import * as _ from 'lodash';
 @Injectable()
 export class FlyUtilService {
 
+    static viewPortSize = 0;
+
     constructor() {
 
     }

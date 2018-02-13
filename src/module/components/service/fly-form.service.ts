@@ -34,7 +34,6 @@ export abstract class FlyFormService implements AfterViewInit {
     onMoveScrool(): Observable<boolean> {
         return Observable
             .fromEvent(window, 'scroll')
-            .throttleTime(100)
             .map(Boolean);
     }
 }

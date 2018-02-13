@@ -1,3 +1,7 @@
+@import "./fly-angular-material";
+@import "./fly-boostrap";
+@import "./fly-prettyjson";
+
 .fly-header {
     color: #717171;
     font-size: 20px;
@@ -44,19 +48,11 @@
     transform: scaleX(1);
 }
 
-.mat-toolbar-shadow {
-    box-shadow: 0 0 4px rgba(0, 0, 0, .14), 0 4px 8px rgba(0, 0, 0, .28);
-}
-
 .div-header-hr {
     margin-top: 20px;
     margin-bottom: 30px;
     height: 3px;
     padding: 0;
-}
-
-.mat-raised-button.mat-primary, .mat-fab.mat-primary, .mat-mini-fab.mat-primary {
-    color: #FFF !important;
 }
 
 label {
@@ -89,60 +85,9 @@ label {
     box-shadow: 0 0 6px #f8b9b7;
 }
 
-/* Small Devices, Tablets */
-@media only screen and (max-width: 768px) {
-
-    .mat-raised-button {
-        width: 100%;
-        margin-top: 5px !important;
-        margin-bottom: 5px !important;
-    }
-}
-
-@media (min-width: 1200px) {
-    .container {
-        max-width: 1140px !important;
-    }
-}
-
-pre span {
-    white-space: normal;
-}
-
-pre {
-
-    .string {
-        color: green;
-    }
-
-    .number {
-        color: darkorange;
-    }
-
-    .boolean {
-        color: blue;
-    }
-
-    .null {
-        color: magenta;
-    }
-
-    .key {
-        color: red;
-    }
-}
-
-.fly-popup {
-    .ng-star-inserted {
-        //overflow-y: auto;
-        //overflow-x: hidden;
-    }
-}
-
-.cdk-overlay-container {
-    z-index: 10000 !important;
-}
-
 .fly-close-modal{
     margin-top: -10px !important;
 }
+
+
+

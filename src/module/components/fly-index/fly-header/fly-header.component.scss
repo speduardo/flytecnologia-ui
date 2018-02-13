@@ -24,8 +24,8 @@
 }
 
 .background-sky {
-    background-color: mat-color($candy-app-primary, 500);
-    background: linear-gradient(145deg, lighten(mat-color($candy-app-primary, 500), 30%), darken(mat-color($candy-app-primary, 500), 15%));
+    background-color: $primaryColor;
+    background: linear-gradient(145deg, lighten($primaryColor, 30%), darken($primaryColor, 15%));
     color: #fff;
     position: absolute;
 }

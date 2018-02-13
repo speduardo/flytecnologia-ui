@@ -84,6 +84,12 @@ export class FlyGridComponent implements OnInit {
     @ViewChild('flyGridCellPhoneBrTemplate')
     flyGridCellPhoneBrTemplate: TemplateRef<any>;
 
+    @ViewChild('flyGridCellEnumTemplate')
+    flyGridCellEnumTemplate: TemplateRef<any>;
+
+    @ViewChild('flyGridCellYesNoTemplate')
+    flyGridCellYesNoTemplate: TemplateRef<any>;
+
     private isAddedEditColumn = false;
 
     constructor(private dialog: MatDialog) {
@@ -113,6 +119,10 @@ export class FlyGridComponent implements OnInit {
                 column.cellTemplate = gridInstance.flyGridCellTimeTemplate;
             } else if (column.type === 'flyPhoneBr') {
                 column.cellTemplate = gridInstance.flyGridCellPhoneBrTemplate;
+            } else if (column.type === 'enum') {
+                column.cellTemplate = gridInstance.flyGridCellEnumTemplate;
+            } else if (column.type === 'yesNo') {
+                column.cellTemplate = gridInstance.flyGridCellYesNoTemplate;
             }
         }
     }
@@ -239,5 +249,35 @@ export class FlyGridComponent implements OnInit {
 
     getNestedValue(obj: any, property: string) {
         return _.get(obj, property);
+    }
+
+    getEnumValue(obj: any, col: any) {
+        const value = this.getNestedValue(obj, col.field);
+
+        if (!value || !col.provider) {
+            return value;
+        }
+
+        const provider = col.provider;
+        const fieldValue = col.fieldValue || 'value';
+        const fieldProperty = 'property';
+
+        const fieldDescription = col.fieldDescription || 'description';
+
+        provider.forEach((item) => {
+            if (item[fieldValue] === value || (item[fieldValue] == null && item[fieldProperty] === value)) {
+                return item[fieldDescription];
+            }
+        });
+
+        return '';
+    }
+
+    getValueYesNo(value) {
+        if (value === 'S' || value === 's' || value === true || value === 'true' || value === '1' || value === 1) {
+            return 'Sim';
+        }
+
+        return 'Não';
     }
 }

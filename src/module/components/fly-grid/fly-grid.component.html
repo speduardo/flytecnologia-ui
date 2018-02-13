@@ -186,4 +186,15 @@
         <label>{{getNestedValue(row,col?.field) | flyPhoneBr }}</label>
     </ng-template>
 
+    <ng-template #flyGridCellEnumTemplate
+                 let-col="col"
+                 let-row="row">
+        <label>{{getEnumValue(row,col)}}</label>
+    </ng-template>
+
+    <ng-template #flyGridCellYesNoTemplate
+                 let-col="col"
+                 let-row="row">
+        <label>{{getValueYesNo(getNestedValue(row,col?.field))}}</label>
+    </ng-template>
 </div>

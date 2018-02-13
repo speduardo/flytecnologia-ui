@@ -7,11 +7,11 @@
 }
 
 .fly-btn-crud-save-clean {
-    background-color: darken(mat-color($candy-app-primary, 500), 30%) !important;
+    background-color: darken($primaryColor, 30%) !important;
 }
 
 .fly-btn-crud-save-exit {
-    background-color: darken(mat-color($candy-app-primary, 500), 15%) !important;
+    background-color: darken($primaryColor, 15%) !important;
 }
 
 .fly-btn-crud-save-clean:disabled {
@@ -33,4 +33,13 @@
 
 .cointainer-navbar{
     margin-left: 40px;
+}
+
+.fly-crud-space-nav-popup {
+    height: 50px;
+}
+
+.fly-crud-navbar{
+    padding-top: 5px;
+    border-top: 2px solid darken($primaryColor, 15%) !important;
 }

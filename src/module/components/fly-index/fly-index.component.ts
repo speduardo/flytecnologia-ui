@@ -4,6 +4,7 @@ import { FlyAppModuleConfigService } from '../../confg/fly-app-module-config.ser
 import { Observable } from 'rxjs/Observable';
 import { Location } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
+import { FlyUtilService } from '../../services/fly-util.service';
 
 @Component({
     selector: 'fly-index',
@@ -40,6 +41,7 @@ export class FlyIndexComponent implements OnInit {
     }
 
     defineHeightViewPort() {
+        FlyUtilService.viewPortSize = window.innerHeight;
         this.minHeightViewPort = window.innerHeight + 'px';
     }
 
