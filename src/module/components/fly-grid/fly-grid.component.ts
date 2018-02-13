@@ -63,11 +63,26 @@ export class FlyGridComponent implements OnInit {
     @ViewChild('flyGridCellTemplate')
     flyGridCellTemplate: TemplateRef<any>;
 
+    @ViewChild('flyGridCellButtonTemplate')
+    flyGridCellButtonTemplate: TemplateRef<any>;
+
     @ViewChild('flyGridCellDateTemplate')
     flyGridCellDateTemplate: TemplateRef<any>;
 
-    @ViewChild('flyGridCellButtonTemplate')
-    flyGridCellButtonTemplate: TemplateRef<any>;
+    @ViewChild('flyGridCellCnpjTemplate')
+    flyGridCellCnpjTemplate: TemplateRef<any>;
+
+    @ViewChild('flyGridCellCpfTemplate')
+    flyGridCellCpfTemplate: TemplateRef<any>;
+
+    @ViewChild('flyGridCellCepTemplate')
+    flyGridCellCepTemplate: TemplateRef<any>;
+
+    @ViewChild('flyGridCellTimeTemplate')
+    flyGridCellTimeTemplate: TemplateRef<any>;
+
+    @ViewChild('flyGridCellPhoneBrTemplate')
+    flyGridCellPhoneBrTemplate: TemplateRef<any>;
 
     private isAddedEditColumn = false;
 
@@ -88,6 +103,16 @@ export class FlyGridComponent implements OnInit {
         if (column.type && !column.cellTemplate) {
             if (column.type === 'date') {
                 column.cellTemplate = gridInstance.flyGridCellDateTemplate;
+            } else if (column.type === 'cnpj') {
+                column.cellTemplate = gridInstance.flyGridCellCnpjTemplate;
+            } else if (column.type === 'cpf') {
+                column.cellTemplate = gridInstance.flyGridCellCpfTemplate;
+            } else if (column.type === 'cep') {
+                column.cellTemplate = gridInstance.flyGridCellCepTemplate;
+            } else if (column.type === 'time') {
+                column.cellTemplate = gridInstance.flyGridCellTimeTemplate;
+            } else if (column.type === 'flyPhoneBr') {
+                column.cellTemplate = gridInstance.flyGridCellPhoneBrTemplate;
             }
         }
     }
@@ -107,6 +132,7 @@ export class FlyGridComponent implements OnInit {
                 () => this.clean()
             );
         }
+
         this.service.showAllRecordsOnSearch = this.showPagination === false;
         this.service.matDialogService = this.dialog;
         this.service.gridScope = this;
@@ -121,7 +147,7 @@ export class FlyGridComponent implements OnInit {
             this.addSelectButtonColumn();
         }
 
-        if (this.showEditButton) {
+        if (this.showEditButton && !(this.service.isFormSearch && this.service.isPopup)) {
             this.addEditButtonColumn();
         }
 

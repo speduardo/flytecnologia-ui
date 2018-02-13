@@ -1,6 +1,6 @@
 import { NgForm, NgModel } from '@angular/forms';
 import { ElementRef, EventEmitter } from '@angular/core';
-import { HttpParams } from '@angular/common/http';
+import { HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material';
@@ -35,6 +35,8 @@ export abstract class FlyService<T extends FlyEntity, F extends FlyFilter> {
     defaultValues = {};
     methodNameDefaultValuesCrud = 'defaultValuesCrud';
     methodNameDefaultValuesSearch = 'defaultValuesSearch';
+
+    customHeadersToSave: HttpHeaders = new HttpHeaders();
 
     gridMasterService: FlyService<any, any>;
     masterService: FlyService<any, any>;
@@ -133,12 +135,9 @@ export abstract class FlyService<T extends FlyEntity, F extends FlyFilter> {
             } else {
                 this.addMasterEntityInDetailEntity();
 
-                const entity = {
-                    entity: this.prepareEntityToPersisty(this.entity),
-                    parameters: this.parameters
-                };
-
-                this.http.post(this.getUrlBase(), entity)
+                this.http.post(this.getUrlBase(),
+                    this.prepareEntityToSave(),
+                    this.prepareOptionsToSave())
                     .subscribe((data) => {
                         this.isSaving = false;
                         this.afterSave();
@@ -151,20 +150,6 @@ export abstract class FlyService<T extends FlyEntity, F extends FlyFilter> {
                         observer.error(reject);
                         observer.complete();
                     });
-            }
-        });
-    }
-
-
-    /*If the entity is saved, so the persist lists is not sending with the entity. */
-    private removePersistDetailItensFromEntitySaved() {
-        if (!this.entity.id || this.listNameEntityMasterPropertyList.length === 0) {
-            return;
-        }
-
-        this.listNameEntityMasterPropertyList.forEach((value) => {
-            if (this.entity[value]) {
-                this.entity[value] = [];
             }
         });
     }
@@ -181,14 +166,9 @@ export abstract class FlyService<T extends FlyEntity, F extends FlyFilter> {
             } else {
                 this.removePersistDetailItensFromEntitySaved();
 
-                this.addMasterEntityInDetailEntity();
-
-                const entity = {
-                    entity: this.prepareEntityToPersisty(this.entity),
-                    parameters: this.parameters
-                };
-
-                this.http.put(`${this.getUrlBase()}/${this.entity.id}`, entity)
+                this.http.put(`${this.getUrlBase()}/${this.entity.id}`,
+                    this.prepareEntityToSave(),
+                    this.prepareOptionsToSave())
                     .subscribe((data) => {
                         this.isSaving = false;
                         this.entity = this.checkValues(data);
@@ -203,6 +183,39 @@ export abstract class FlyService<T extends FlyEntity, F extends FlyFilter> {
                         observer.error(reject);
                         observer.complete();
                     });
+            }
+        });
+    }
+
+    private prepareEntityToSave(): any {
+        this.addMasterEntityInDetailEntity();
+
+        return {
+            entity: this.prepareEntityToPersisty(this.entity),
+            parameters: this.parameters
+        };
+    }
+
+    private prepareOptionsToSave(): any {
+        if (!this.customHeadersToSave) {
+            return null;
+        }
+
+        return {
+            headers: this.customHeadersToSave,
+        };
+    }
+
+
+    /*If the entity is saved, so the persist lists is not sending with the entity. */
+    private removePersistDetailItensFromEntitySaved() {
+        if (!this.entity.id || this.listNameEntityMasterPropertyList.length === 0) {
+            return;
+        }
+
+        this.listNameEntityMasterPropertyList.forEach((value) => {
+            if (this.entity[value]) {
+                this.entity[value] = [];
             }
         });
     }

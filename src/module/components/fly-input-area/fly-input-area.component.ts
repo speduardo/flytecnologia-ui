@@ -24,7 +24,7 @@ export class FlyInputAreaComponent extends FlyBaseInput implements AfterViewInit
     @Input() requiredConditional = false;
     @Input() placeholder = '';
     @Input() readonly = false;
-    @Input() maxlength = 1000;
+    @Input() maxlength;
     @Input() minlength: number;
     @Input() spellcheck: boolean;
     @Input() showCount = false;
@@ -41,6 +41,10 @@ export class FlyInputAreaComponent extends FlyBaseInput implements AfterViewInit
 
     ngOnInit(): void {
         super.ngOnInit();
+
+        if (!this.maxlength) {
+            FlyUtilService.fieldRequired('maxlength');
+        }
     }
 
     ngAfterViewInit(): void {

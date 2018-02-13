@@ -13,9 +13,8 @@ import {
 
 import { MAT_DIALOG_DATA } from '@angular/material';
 
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs/Subscription';
-import { FlyAlertService } from '../../services/fly-alert.service';
 import { FlyFormService } from '../service/fly-form.service';
 import { FlyModalCrudData } from '../../services/fly-modal.service';
 import { FlyUtilService } from '../../services/fly-util.service';
@@ -42,8 +41,6 @@ export class FlyFormCrudComponent extends FlyFormService implements OnInit, OnDe
     isMarksInViewPort = true;
 
     constructor(private route: ActivatedRoute,
-                private router: Router,
-                private alertService: FlyAlertService,
                 @Optional() @Inject(MAT_DIALOG_DATA) public modalCrudData: FlyModalCrudData) {
         super();
     }
@@ -51,27 +48,29 @@ export class FlyFormCrudComponent extends FlyFormService implements OnInit, OnDe
     ngOnInit() {
         const thisAux = this;
 
-        if (!this.modalCrudData) {
-            this.routerSubscription = this.route.params.subscribe(params => {
-                if (params['id']) {
-                    thisAux.service.findById(Number(params['id'])).subscribe();
-                }
-            });
-        }
-
-        this.service.isFormCrud = true;
-
-        this.service.gridMasterService = this.modalCrudData ? this.modalCrudData.gridService : null;
-        this.service.isPopup = !!this.service.gridMasterService;
-        this.service.isPopupCrudDetail = !!this.service.gridMasterService;
-
-        if (this.service.isPopupCrudDetail) {
-            this.service.modalCrudRef = this.service.gridMasterService.modalCrudRef;
-
-            if (!this.service.gridMasterService.masterService.entity.id) {
-                this.labelSaveButton = 'ADICIONAR';
+        setTimeout(() => {
+            if (!this.modalCrudData) {
+                this.routerSubscription = this.route.params.subscribe(params => {
+                    if (params['id']) {
+                        thisAux.service.findById(Number(params['id'])).subscribe();
+                    }
+                });
             }
-        }
+
+            this.service.isFormCrud = true;
+
+            this.service.gridMasterService = this.modalCrudData ? this.modalCrudData.gridService : null;
+            this.service.isPopup = !!this.service.gridMasterService;
+            this.service.isPopupCrudDetail = !!this.service.gridMasterService;
+
+            if (this.service.isPopupCrudDetail) {
+                this.service.modalCrudRef = this.service.gridMasterService.modalCrudRef;
+
+                if (!this.service.gridMasterService.masterService.entity.id) {
+                    this.labelSaveButton = 'ADICIONAR';
+                }
+            }
+        }, 0);
 
         this.service.loadDefaultValuesCrud().subscribe(
             () => {

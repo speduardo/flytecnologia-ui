@@ -62,6 +62,13 @@ import { FlyInputUploadComponent } from './components/fly-input-upload/fly-input
 import { FlyModalService } from './services/fly-modal.service';
 import { FlyDatePipe } from './pipes/fly-date.pipe';
 import { FlyInputAutocompleteComponent } from './components/fly-input-autocomplete/fly-input-autocomplete.component';
+import { FlyIndexComponent } from './components/fly-index/fly-index.component';
+import { FlyFooterComponent } from './components/fly-index/fly-footer/fly-footer.component';
+import { FlyHeaderComponent } from './components/fly-index/fly-header/fly-header.component';
+import { FlyCnpjPipe } from './pipes/fly-cnpj.pipe';
+import { FlyCepPipe } from './pipes/fly-cep.pipe';
+import { FlyTimePipe } from './pipes/fly-time.pipe';
+import { FlyPhoneBrPipe } from './pipes/fly-phone-br.pipe';
 
 export * from './components/base/fly-abstract-ng-model';
 export * from './components/base/fly-base-input';
@@ -91,10 +98,18 @@ export * from './components/fly-form-default/fly-form-default.component';
 export * from './components/fly-form-report/fly-form-report.component';
 export * from './components/fly-form-processing/fly-form-processing.component';
 
+export * from './components/fly-index/fly-index.component';
+export * from './components/fly-index/fly-footer/fly-footer.component';
+export * from './components/fly-index/fly-header/fly-header.component';
+
 export * from './directives/fly-uppercase-input.directive';
 
 export * from './pipes/fly-cpf.pipe';
 export * from './pipes/fly-date.pipe';
+export * from './pipes/fly-cep.pipe';
+export * from './pipes/fly-cnpj.pipe';
+export * from './pipes/fly-phone-br.pipe';
+export * from './pipes/fly-time.pipe';
 
 export * from './services/fly.service';
 export * from './services/fly-util.service';
@@ -150,6 +165,10 @@ export * from './security/fly-jwt.service';
         FlyUppercaseInputDirective,
         FlyCpfPipe,
         FlyDatePipe,
+        FlyCnpjPipe,
+        FlyCepPipe,
+        FlyTimePipe,
+        FlyPhoneBrPipe,
         FlyAlertYesNoComponent,
         FlyAlertOkComponent,
         FlyNotFoundComponent,
@@ -169,6 +188,9 @@ export * from './security/fly-jwt.service';
         FlyInputDateComponent,
         FlyInputUploadComponent,
         FlyInputAutocompleteComponent,
+        FlyIndexComponent,
+        FlyHeaderComponent,
+        FlyFooterComponent
     ],
     exports: [
         FormsModule,
@@ -197,6 +219,10 @@ export * from './security/fly-jwt.service';
         FlyUppercaseInputDirective,
         FlyCpfPipe,
         FlyDatePipe,
+        FlyCnpjPipe,
+        FlyCepPipe,
+        FlyTimePipe,
+        FlyPhoneBrPipe,
         FlyAlertYesNoComponent,
         FlyAlertOkComponent,
         FlyNotFoundComponent,
@@ -216,6 +242,9 @@ export * from './security/fly-jwt.service';
         FlyInputDateComponent,
         FlyInputUploadComponent,
         FlyInputAutocompleteComponent,
+        FlyIndexComponent,
+        FlyHeaderComponent,
+        FlyFooterComponent
     ],
     entryComponents: [
         FlyAlertYesNoComponent,

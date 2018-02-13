@@ -31,7 +31,7 @@ export class FlyInputAutocompleteComponent extends FlyBaseInput implements OnIni
     @Input() requiredConditional = false;
     @Input() placeholder = '';
     @Input() readonly = false;
-    @Input() selectOnTab: boolean;
+    @Input() selectOnTab: boolean
     @Input() itemTemplate: TemplateRef<any>;
     @Input() entityModel: FlyEntity;
     @Input() service: FlyService<any, any>;
@@ -154,8 +154,6 @@ export class FlyInputAutocompleteComponent extends FlyBaseInput implements OnIni
     }
 
     onSetValue(value: any) {
-        console.log(value);
-
         if (value) {
             this.service.getItemAutocomplete(value)
                 .subscribe(

@@ -44,7 +44,7 @@ export class FlyInputDateComponent extends FlyBaseInput implements OnInit {
         super(utilService);
 
         if (!this.dateInputFormat) {
-            this.dateInputFormat = configService.dateInputFormat;
+            this.dateInputFormat = configService.dateInputFormat.toUpperCase();
         }
 
         this.bsConfig = Object.assign({}, {

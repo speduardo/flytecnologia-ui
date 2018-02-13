@@ -5,7 +5,8 @@
     </div>
 
     <div *ngIf="isDefaultValuesAvalilable">
-        <div class="row fly-crud-row-header">
+        <div class="row fly-crud-row-header"
+             [ngClass]="{'fly-crud-row-header-popup':service.isPopup, 'fly-crud-row-header':!service.isPopup}">
             <div class="col-md-12">
                 <h4 class="fly-header">
                     <i class="fa fa-wpforms" style="margin-right: 5px"></i>
@@ -27,7 +28,7 @@
 
                     <button mat-icon-button
                             (click)="service.closePopup()"
-                            class="float-right"
+                            class="float-right fly-close-modal"
                             type="button"
                             *ngIf="service.isPopup"
                             tabindex="-1">

@@ -12,6 +12,7 @@ export class FlyConfigService {
     apiUrl: string;
     authorizationBasicCode: string;
     dateInputFormat = 'DD/MM/YYYY';
+    datePipeFormat = 'DD/MM/YYYY';
 
     /*
      *  theme-default, theme-green, theme-blue, theme-dark-blue

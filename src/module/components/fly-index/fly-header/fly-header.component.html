@@ -1,0 +1,23 @@
+<div class="background-sky hero"></div>
+
+<mat-toolbar color="primary"
+             class="mat-toolbar-shadow fly-header-toolbar">
+    <mat-toolbar-row>
+        <img class="img-header"
+             [src]="imgLogo"
+             (click)="_clickLogo()">
+
+        <span class="mat-spacer"></span>
+
+        <button mat-icon-button (click)="_logout()"
+                class="header-icon fly-btn-logout"
+                tabindex="-1">
+            <mat-icon aria-label="Exit"
+                      title="Exit"
+                      fontSet="fa"
+                      fontIcon="fa-sign-out"></mat-icon>
+        </button>
+    </mat-toolbar-row>
+</mat-toolbar>
+
+

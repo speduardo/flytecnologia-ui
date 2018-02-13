@@ -131,3 +131,18 @@ pre {
         color: red;
     }
 }
+
+.fly-popup {
+    .ng-star-inserted {
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+}
+
+.cdk-overlay-container {
+    z-index: 10000 !important;
+}
+
+.fly-close-modal{
+    margin-top: -10px !important;
+}

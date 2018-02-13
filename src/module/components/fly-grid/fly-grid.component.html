@@ -81,8 +81,7 @@
         <ng-template pTemplate="emptymessage" let-columns>
             <tr>
                 <td [attr.colspan]="service.columns.length"
-                    class="fly-grid-any-record"
-                    [ngStyle]="{'height': gridHeight}">
+                    class="fly-grid-any-record">
                     {{ msgAnyRecord }}
                 </td>
             </tr>
@@ -154,7 +153,37 @@
     <ng-template #flyGridCellDateTemplate
                  let-col="col"
                  let-row="row">
-        <label>{{getNestedValue(row,col?.field) | flyDatePipe }}</label>
+        <label>{{getNestedValue(row,col?.field) | flyDate }}</label>
+    </ng-template>
+
+    <ng-template #flyGridCellCnpjTemplate
+                 let-col="col"
+                 let-row="row">
+        <label>{{getNestedValue(row,col?.field) | flyCnpj }}</label>
+    </ng-template>
+
+    <ng-template #flyGridCellCpfTemplate
+                 let-col="col"
+                 let-row="row">
+        <label>{{getNestedValue(row,col?.field) | flyCpf }}</label>
+    </ng-template>
+
+    <ng-template #flyGridCellCepTemplate
+                 let-col="col"
+                 let-row="row">
+        <label>{{getNestedValue(row,col?.field) | flyCep }}</label>
+    </ng-template>
+
+    <ng-template #flyGridCellTimeTemplate
+                 let-col="col"
+                 let-row="row">
+        <label>{{getNestedValue(row,col?.field) | flyTime }}</label>
+    </ng-template>
+
+    <ng-template #flyGridCellPhoneBrTemplate
+                 let-col="col"
+                 let-row="row">
+        <label>{{getNestedValue(row,col?.field) | flyPhoneBr }}</label>
     </ng-template>
 
 </div>
