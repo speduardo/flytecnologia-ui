@@ -3,6 +3,7 @@ import { MatDialog } from '@angular/material';
 import { Observable } from 'rxjs/Observable';
 
 import { FlyService } from './fly.service';
+import { FlyEntity } from './entity/fly-entity';
 
 @Injectable()
 export class FlyModalService {
@@ -22,6 +23,7 @@ export interface FlyModalCrudData {
     id: number;
     gridService: FlyService<any, any>;
     autocompleteService: FlyService<any, any>;
+    entity: FlyEntity;
 }
 
 

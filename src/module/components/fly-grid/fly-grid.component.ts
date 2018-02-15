@@ -1,4 +1,13 @@
-import { Component, ElementRef, Input, OnInit, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
+import {
+    AfterViewInit,
+    Component,
+    ElementRef,
+    Input,
+    OnInit,
+    TemplateRef,
+    ViewChild,
+    ViewEncapsulation
+} from '@angular/core';
 import { MatDialog } from '@angular/material';
 
 import * as _ from 'lodash';
@@ -28,7 +37,7 @@ import { FlyService } from '../../services/fly.service';
         ])
     ]
 })
-export class FlyGridComponent implements OnInit {
+export class FlyGridComponent implements OnInit, AfterViewInit {
     smallnumPages = 0;
     selectionMode = 'single';
     rowState = 'ready';
@@ -100,9 +109,14 @@ export class FlyGridComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.configGridService();
-        this.addDefaultColumns();
-        this.onSearchOnStart();
+    }
+
+    ngAfterViewInit(): void {
+        setTimeout(() => {
+            this.configGridService();
+            this.addDefaultColumns();
+            this.onSearchOnStart();
+        }, 0);
     }
 
     afterPushColumn(column: any, gridInstance: any) {
@@ -264,13 +278,15 @@ export class FlyGridComponent implements OnInit {
 
         const fieldDescription = col.fieldDescription || 'description';
 
+        let description = '';
+
         provider.forEach((item) => {
             if (item[fieldValue] === value || (item[fieldValue] == null && item[fieldProperty] === value)) {
-                return item[fieldDescription];
+                description = item[fieldDescription];
             }
         });
 
-        return '';
+        return description;
     }
 
     getValueYesNo(value) {

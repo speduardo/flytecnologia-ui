@@ -84,10 +84,14 @@ export class FlyFormCrudComponent extends FlyFormService implements OnInit, OnDe
                     this.service.form = this.flyForm;
                     this.service.onInitForm();
 
-                    if (this.modalCrudData && this.modalCrudData.id) {
-                        thisAux.service.findById(this.modalCrudData.id).subscribe(
-                            () => this.checkControlbarFixed()
-                        );
+                    if (this.modalCrudData) {
+                        if (this.modalCrudData.id) {
+                            thisAux.service.findById(this.modalCrudData.id).subscribe(
+                                () => this.checkControlbarFixed()
+                            );
+                        } else if (this.modalCrudData.entity) {
+                            this.service.setEntity(this.modalCrudData.entity);
+                        }
                     }
 
                     this.checkControlbarFixed();

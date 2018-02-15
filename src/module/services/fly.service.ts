@@ -369,6 +369,10 @@ export abstract class FlyService<T extends FlyEntity, F extends FlyFilter> {
         return <T>FlyUtilService.convertNullValuesToNewInstanceOfEntity(entity, this._emptyEntity);
     }
 
+    setEntity(entity: T): void {
+        this.entity = <T>FlyUtilService.convertNullValuesToNewInstanceOfEntity(entity, this._emptyEntity);
+    }
+
     prepareEntityToPersisty(entity: T): T {
         return <T>FlyUtilService.prepareEntityToPersisty(
             this._emptyEntity,
@@ -649,11 +653,12 @@ export abstract class FlyService<T extends FlyEntity, F extends FlyFilter> {
         this.config.router.navigate([this.config.appService.appModule + '/' + this.urlRouter, id]);
     }
 
-    openPopupCrudForm(id: number = null): void {
+    openPopupCrudForm(id: number = null, entity: FlyEntity = null): void {
         const data: FlyModalCrudData = {
             id: id,
             gridService: this.isAutoComplete ? null : this,
-            autocompleteService: this.isAutoComplete ? this : null
+            autocompleteService: this.isAutoComplete ? this : null,
+            entity: entity
         };
 
         this.modalCrudRef = this.matDialogService.open(this.crudFormComponent, {
@@ -704,12 +709,18 @@ export abstract class FlyService<T extends FlyEntity, F extends FlyFilter> {
     }
 
     $gridEdit(data) {
-        if (!!data && data.id) {
+        if (!!data) {
 
             if (this.masterService) {
-                this.openPopupCrudForm(data.id);
+                if (!data.id && !this.masterService.entity.id) {
+                    this.openPopupCrudForm(null, data);
+                } else {
+                    this.openPopupCrudForm(data.id);
+                }
             } else {
-                this.editRecord(Number(data.id));
+                if (data.id) {
+                    this.editRecord(Number(data.id));
+                }
             }
         }
     }
