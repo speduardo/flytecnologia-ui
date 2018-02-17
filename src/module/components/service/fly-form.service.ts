@@ -13,6 +13,7 @@ export abstract class FlyFormService implements AfterViewInit {
     @ContentChildren(NgModel) public models: QueryList<NgModel>;
     @ViewChild('flyForm') flyForm: NgForm;
     @Input() service: FlyService<any, any>;
+    @Input() header: string;
 
     isDefaultValuesAvalilable = false;
 

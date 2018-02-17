@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpRequest, HttpEvent } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 import './../confg/rxjs-operators.config';
 
@@ -12,6 +12,14 @@ export class FlyHttpClient {
     constructor(private auth: FlyAuthService,
                 private http: HttpClient) {
     }
+
+    public request<R>(req: HttpRequest<any>): Observable<HttpEvent<R>> {
+        return this.checkToken(() => this.http.request(req));
+    }
+
+    /*public request(method: string, url: string, options?: any): Observable<any> {
+        return this.checkToken(() => this.http.request(method, url, options));
+    }*/
 
     public delete(url: string, options?: any): Observable<any> {
         return this.checkToken(() => this.http.delete(url, options));

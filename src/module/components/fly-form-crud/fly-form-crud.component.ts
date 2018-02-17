@@ -18,12 +18,26 @@ import { Subscription } from 'rxjs/Subscription';
 import { FlyFormService } from '../service/fly-form.service';
 import { FlyModalCrudData } from '../../services/fly-modal.service';
 import { FlyUtilService } from '../../services/fly-util.service';
+import { animate, keyframes, state, style, transition, trigger } from '@angular/animations';
 
 @Component({
     selector: 'fly-form-crud',
     templateUrl: './fly-form-crud.component.html',
     styleUrls: ['./fly-form-crud.component.scss'],
     encapsulation: ViewEncapsulation.None,
+    animations: [
+        trigger('controlbar', [
+            state('normal', style({opacity: 1})),
+            transition('normal => fixed', animate('300ms 0s ease-in', keyframes([
+                style({opacity: 0, transform: 'translateX(-30px)', offset: 0}),
+                style({opacity: 1, transform: 'translateX(0px)', offset: 1})
+            ]))),
+            transition('fixed => normal', animate('300ms 0s ease-out', keyframes([
+                style({opacity: 0, transform: 'translateX(30px)', offset: 0}),
+                style({opacity: 1, transform: 'translateX(0px)', offset: 1})
+            ])))
+        ])
+    ]
 })
 export class FlyFormCrudComponent extends FlyFormService implements OnInit, OnDestroy, AfterViewInit {
     routerSubscription: Subscription;
@@ -34,7 +48,8 @@ export class FlyFormCrudComponent extends FlyFormService implements OnInit, OnDe
     @Input() labelRemoveButton = 'EXCLUIR';
     @Input() labelSaveAndCloseButton = ' E FECHAR';
     @Input() labelSaveAndCleanButton = ' E LIMPAR';
-    @Input() header: string;
+
+    controlbarState = 'normal';
 
     @ViewChild('cmark') cmark: ElementRef;
 
@@ -104,6 +119,8 @@ export class FlyFormCrudComponent extends FlyFormService implements OnInit, OnDe
 
     checkControlbarFixed(): void {
         this.isMarksInViewPort = this.cmark && FlyUtilService.isInViewport(this.cmark.nativeElement);
+
+        this.controlbarState = this.isMarksInViewPort ? 'normal' : 'fixed';
     }
 
     ngAfterViewInit(): void {

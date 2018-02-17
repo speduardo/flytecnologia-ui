@@ -1,6 +1,6 @@
 import { NgForm, NgModel } from '@angular/forms';
 import { ElementRef, EventEmitter } from '@angular/core';
-import { HttpHeaders, HttpParams } from '@angular/common/http';
+import { HttpEvent, HttpHeaders, HttpParams, HttpRequest } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material';
@@ -54,6 +54,8 @@ export abstract class FlyService<T extends FlyEntity, F extends FlyFilter> {
     modalCrudRef: FlyModalRef;
     isFormCrud = false;
     crudFormComponent: any;
+    methodNameCreate = '';
+    methodNameUpdate = '';
     /*form crud*/
 
     /*grid*/
@@ -85,6 +87,10 @@ export abstract class FlyService<T extends FlyEntity, F extends FlyFilter> {
     inputField: NgModel;
     /*autocomplete*/
 
+    /*file upload*/
+    methodNameHandleFileUpload = 'handleFileUpload';
+    /*file upload*/
+
     private _emptyEntity: T;
 
     constructor(protected http: FlyHttpClient,
@@ -106,6 +112,26 @@ export abstract class FlyService<T extends FlyEntity, F extends FlyFilter> {
 
     getUrlBase(): string {
         return this.config.apiUrl + '/' + this.controller;
+    }
+
+    getUrlToCreate(): string {
+        let url = this.getUrlBase();
+
+        if (this.methodNameCreate) {
+            url += '/' + this.methodNameCreate;
+        }
+
+        return url;
+    }
+
+    getUrlToUpdate(): string {
+        let url = this.getUrlBase();
+
+        if (this.methodNameUpdate) {
+            url += '/' + this.methodNameUpdate;
+        }
+
+        return url;
     }
 
     getFilter(): F {
@@ -138,7 +164,7 @@ export abstract class FlyService<T extends FlyEntity, F extends FlyFilter> {
             } else {
                 this.addMasterEntityInDetailEntity();
 
-                this.http.post(this.getUrlBase(),
+                this.http.post(this.getUrlToCreate(),
                     this.prepareEntityToSave(),
                     this.prepareOptionsToSave())
                     .subscribe((data) => {
@@ -169,7 +195,7 @@ export abstract class FlyService<T extends FlyEntity, F extends FlyFilter> {
             } else {
                 this.removePersistDetailItensFromEntitySaved();
 
-                this.http.put(`${this.getUrlBase()}/${this.entity.id}`,
+                this.http.put(`${this.getUrlToUpdate()}/${this.entity.id}`,
                     this.prepareEntityToSave(),
                     this.prepareOptionsToSave())
                     .subscribe((data) => {
@@ -193,10 +219,18 @@ export abstract class FlyService<T extends FlyEntity, F extends FlyFilter> {
     private prepareEntityToSave(): any {
         this.addMasterEntityInDetailEntity();
 
-        return {
+        const entityAux = {
             entity: this.prepareEntityToPersisty(this.entity),
             parameters: this.parameters
         };
+
+        this.addValueToSave(entityAux);
+
+        return entityAux;
+    }
+
+    addValueToSave(entity: any): void {
+
     }
 
     private prepareOptionsToSave(): any {
@@ -662,7 +696,6 @@ export abstract class FlyService<T extends FlyEntity, F extends FlyFilter> {
         };
 
         this.modalCrudRef = this.matDialogService.open(this.crudFormComponent, {
-            //height: (FlyUtilService.viewPortSize - 100) + 'px',
             panelClass: 'container',
             data: data
         });
@@ -810,4 +843,27 @@ export abstract class FlyService<T extends FlyEntity, F extends FlyFilter> {
     }
 
     /*end autocomplete methods*/
+
+    /*file upload start*/
+    pushFileToStorage(file: File): Observable<HttpEvent<{}>> {
+        const formData: FormData = new FormData();
+
+        formData.append('file', file);
+
+        const customHeadersToSave = new HttpHeaders({
+            'Content-Type': 'multipart/form-data'
+        });
+
+        const url = this.getUrlBase() + '/' + this.methodNameHandleFileUpload;
+
+        const req = new HttpRequest('POST', url, formData, {
+            headers: customHeadersToSave,
+            reportProgress: true,
+            responseType: 'text'
+        });
+
+        return this.http.request(req);
+    }
+
+    /*file upload end*/
 }

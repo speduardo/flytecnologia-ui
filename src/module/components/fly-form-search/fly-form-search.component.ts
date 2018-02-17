@@ -10,8 +10,6 @@ import { MAT_DIALOG_DATA } from '@angular/material';
     encapsulation: ViewEncapsulation.None,
 })
 export class FlyFormSearchComponent extends FlyFormService implements OnInit, AfterViewInit {
-    @Input() header: string;
-
     constructor(@Optional() @Inject(MAT_DIALOG_DATA) public modalSearchData: FlyModalSearchData) {
         super();
     }

@@ -50,7 +50,7 @@
     <nav [ngClass]="{
             'navbar fixed-bottom navbar-light bg-light fly-crud-navbar': !isMarksInViewPort,
             'fly-crud-row-header':isMarksInViewPort
-        }">
+        }" [@controlbar]="controlbarState">
 
         <div [ngClass]="{'cointainer-navbar': !isMarksInViewPort}">
 

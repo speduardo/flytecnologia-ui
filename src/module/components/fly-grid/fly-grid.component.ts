@@ -116,7 +116,7 @@ export class FlyGridComponent implements OnInit, AfterViewInit {
             this.configGridService();
             this.addDefaultColumns();
             this.onSearchOnStart();
-        }, 0);
+        }, 100);
     }
 
     afterPushColumn(column: any, gridInstance: any) {
