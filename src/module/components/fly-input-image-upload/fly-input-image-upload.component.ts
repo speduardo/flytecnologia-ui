@@ -5,14 +5,14 @@ import { FlyAbstractNgModel, ngModelProvider } from '../base/fly-abstract-ng-mod
 let nextUniqueId = 0;
 
 @Component({
-    selector: 'fly-input-upload-imagem',
-    templateUrl: './fly-input-upload-imagem.component.html',
-    styleUrls: ['./fly-input-upload-imagem.component.scss'],
+    selector: 'fly-input-image-upload',
+    templateUrl: './fly-input-image-upload.component.html',
+    styleUrls: ['./fly-input-image-upload.component.scss'],
     providers: [
-        ngModelProvider(FlyInputUploadImagemComponent)
+        ngModelProvider(FlyInputImageUploadComponent)
     ]
 })
-export class FlyInputUploadImagemComponent extends FlyAbstractNgModel<string> implements OnInit {
+export class FlyInputImageUploadComponent extends FlyAbstractNgModel<string> implements OnInit {
     @Input() ngModelExtension: any;
     @Input() maxWidth = 800;
     @Input() maxHeight = 600;

@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { FlyInputUploadImagemComponent } from './fly-input-upload-imagem.component';
+import { FlyInputImageUploadComponent } from './fly-input-image-upload.component';
 
-describe('FlyInputUploadImagemComponent', () => {
-    let component: FlyInputUploadImagemComponent;
-    let fixture: ComponentFixture<FlyInputUploadImagemComponent>;
+describe('FlyInputImageUploadComponent', () => {
+    let component: FlyInputImageUploadComponent;
+    let fixture: ComponentFixture<FlyInputImageUploadComponent>;
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
-            declarations: [FlyInputUploadImagemComponent]
+            declarations: [FlyInputImageUploadComponent]
         })
             .compileComponents();
     }));
 
     beforeEach(() => {
-        fixture = TestBed.createComponent(FlyInputUploadImagemComponent);
+        fixture = TestBed.createComponent(FlyInputImageUploadComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
     });
