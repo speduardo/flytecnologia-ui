@@ -1,0 +1,25 @@
+<div [id]="id" class="fly-input-upload-imagem">
+    <div class="row row-input-foto">
+        <div class="col-md-12 padding-zero">
+            <input type="file"
+                   (change)="selectFile($event)">
+            <button type="button" class="close" aria-label="Close"
+                    *ngIf="!!value"
+                    (click)="removeFile()">
+                <span aria-hidden="true">&times;</span> Remover
+            </button>
+        </div>
+    </div>
+
+    <div style="width: 100%"
+         *ngIf="isCompressing">
+        <mat-progress-bar
+            mode="indeterminate">
+        </mat-progress-bar>
+        <label>Comprimindo imagem...</label>
+    </div>
+
+    <img [src]="value"
+         *ngIf="!!value"
+         class="img-fluid img-foto">
+</div>

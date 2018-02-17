@@ -70,6 +70,8 @@ import { FlyCnpjPipe } from './pipes/fly-cnpj.pipe';
 import { FlyCepPipe } from './pipes/fly-cep.pipe';
 import { FlyTimePipe } from './pipes/fly-time.pipe';
 import { FlyPhoneBrPipe } from './pipes/fly-phone-br.pipe';
+import { FlyUploadService } from './services/fly-upload.service';
+import { FlyInputUploadImagemComponent } from './components/fly-input-upload-imagem/fly-input-upload-imagem.component';
 
 export * from './components/base/fly-abstract-ng-model';
 export * from './components/base/fly-base-input';
@@ -91,6 +93,7 @@ export * from './components/fly-not-found/fly-not-found.component';
 export * from './components/fly-index-module/fly-index-module.component';
 export * from './components/fly-not-authorized/fly-not-authorized.component';
 export * from './components/fly-controlbar/fly-controlbar.component';
+export * from './components/fly-input-upload-imagem/fly-input-upload-imagem.component';
 
 export * from './components/fly-grid/fly-grid.component';
 export * from './components/fly-form-search/fly-form-search.component';
@@ -117,6 +120,7 @@ export * from './services/fly-util.service';
 export * from './services/fly-alert.service';
 export * from './services/fly-app.service';
 export * from './services/fly-modal.service';
+export * from './services/fly-upload.service';
 
 export * from './provider/fly-error-handler';
 
@@ -192,7 +196,8 @@ export * from './security/fly-jwt.service';
         FlyInputAutocompleteComponent,
         FlyIndexComponent,
         FlyHeaderComponent,
-        FlyFooterComponent
+        FlyFooterComponent,
+        FlyInputUploadImagemComponent
     ],
     exports: [
         FormsModule,
@@ -247,7 +252,8 @@ export * from './security/fly-jwt.service';
         FlyInputAutocompleteComponent,
         FlyIndexComponent,
         FlyHeaderComponent,
-        FlyFooterComponent
+        FlyFooterComponent,
+        FlyInputUploadImagemComponent
     ],
     entryComponents: [
         FlyAlertYesNoComponent,
@@ -276,6 +282,7 @@ export class FlytecnologiaUiModule {
                 },
                 FlyUtilService,
                 FlyAlertService,
+                FlyUploadService,
                 FlyConfigService,
                 FlyAppService,
                 FlyAppModuleConfigService,
