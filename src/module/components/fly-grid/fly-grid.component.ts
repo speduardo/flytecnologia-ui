@@ -242,11 +242,11 @@ export class FlyGridComponent implements OnInit, AfterViewInit {
         return service.$gridSelectToAutocomplete(data);
     }
 
-    onEdit(service, data) {
+    onEdit(service, data): void {
         service.$gridEdit(data);
     }
 
-    $gridRemove(service, data) {
+    $gridRemove(service, data): void {
         service.$gridRemove(data);
     }
 
@@ -261,11 +261,11 @@ export class FlyGridComponent implements OnInit, AfterViewInit {
     pageChanged(event: any): void {
     }
 
-    getNestedValue(obj: any, property: string) {
+    getNestedValue(obj: any, property: string): string {
         return _.get(obj, property);
     }
 
-    getEnumValue(obj: any, col: any) {
+    getEnumValue(obj: any, col: any): string {
         const value = this.getNestedValue(obj, col.field);
 
         if (!value || !col.provider) {
@@ -289,11 +289,24 @@ export class FlyGridComponent implements OnInit, AfterViewInit {
         return description;
     }
 
-    getValueYesNo(value) {
+    getValueYesNo(value): string {
         if (value === 'S' || value === 's' || value === true || value === 'true' || value === '1' || value === 1) {
             return 'Sim';
         }
 
         return 'Não';
+    }
+
+    customSort($event): void {
+        const a = $event;
+
+        if ($event.order && $event.field &&
+            !(this.service.filter.sortGridByField === $event.field &&
+                this.service.filter.typeSortGridByField === ($event.order === 1 ? 'a' : 'd'))) {
+            this.service.filter.sortGridByField = $event.field;
+            this.service.filter.typeSortGridByField = $event.order === 1 ? 'a' : 'd';
+
+            this.search();
+        }
     }
 }

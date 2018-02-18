@@ -12,6 +12,8 @@
         [scrollable]="true"
         [scrollHeight]="gridHeight"
         [loading]="service.isSearching"
+        (sortFunction)="customSort($event)"
+        [customSort]="true"
     >
         <ng-template pTemplate="caption"
                      *ngIf="!!header">
@@ -31,13 +33,17 @@
                     <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
                 </th>
                 <th *ngFor="let col of service.columns"
-                    [pSortableColumn]="col.field">
+                    [pSortableColumn]="col.sortable === false ? '' : col.field"
+                    pResizableColumn>
                     <ng-container
                         *ngTemplateOutlet="col.headerTemplate ? col.headerTemplate: flyGridHeaderTemplate">
                     </ng-container>
 
                     <ng-template #flyGridHeaderTemplate>
                         {{col.header}}
+                        <p-sortIcon [field]="col.field"
+                                    *ngIf="col.sortable !== false">
+                        </p-sortIcon>
                     </ng-template>
                 </th>
             </tr>

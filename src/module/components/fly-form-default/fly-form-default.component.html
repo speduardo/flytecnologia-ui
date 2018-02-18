@@ -1,3 +1,66 @@
-<p>
-  fly-form-default works!
-</p>
+<form novalidate #flyForm="ngForm"
+      class="fly-form">
+    <div *ngIf="!isDefaultValuesAvalilable; else formDefaultLoaded">
+        Carregando...
+    </div>
+</form>
+
+<ng-template #formDefaultLoaded>
+    <div class="row"
+         [ngClass]="{'fly-crud-row-header-popup':service.isPopup, 'fly-crud-row-header':!service.isPopup}">
+        <div class="col-md-12">
+            <h4 class="fly-header">
+                <i class="fa fa-wpforms" style="margin-right: 5px"></i>
+                <span class="fly-header-effect">
+                        {{ header }}
+                    </span>
+
+                <button mat-fab color="accent"
+                        (click)="service.goToSearch()"
+                        class="float-right"
+                        type="button"
+                        *ngIf="!service.isPopup"
+                        tabindex="-1"
+                        style="margin-top:-18px">
+                    <mat-icon aria-label="Search"
+                              fontSet="fa"
+                              fontIcon="fa-search"></mat-icon>
+                </button>
+
+                <button mat-icon-button
+                        (click)="service.closePopup()"
+                        class="float-right fly-close-modal"
+                        type="button"
+                        *ngIf="service.isPopup"
+                        tabindex="-1">
+                    <i class="fa fa-times fa-2x"></i>
+                </button>
+            </h4>
+        </div>
+    </div>
+    <ng-content select="[body]">
+    </ng-content>
+
+    <div [ngClass]="{'fly-crud-space-nav-popup': service.isPopup}"></div>
+
+    <div class="cmark" #cmark></div>
+
+    <nav [ngClass]="{
+            'navbar fixed-bottom navbar-light bg-light fly-crud-navbar': !isMarksInViewPort,
+            'fly-crud-row-header':isMarksInViewPort
+        }" [@controlbar]="controlbarState">
+
+        <div [ngClass]="{'cointainer-navbar': !isMarksInViewPort}">
+
+            <div class="row">
+                <div class="col-md-12 fly-line-button">
+                    <ng-content select="[footer]">
+                    </ng-content>
+                </div>
+            </div>
+            <mat-progress-bar mode="indeterminate"
+                              *ngIf="isDisabledButtons()">
+            </mat-progress-bar>
+        </div>
+    </nav>
+</ng-template>

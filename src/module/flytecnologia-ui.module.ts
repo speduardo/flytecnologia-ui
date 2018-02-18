@@ -6,7 +6,7 @@ import {
     MatCardModule,
     MatCheckboxModule,
     MatDialogModule,
-    MatIconModule,
+    MatIconModule, MatListModule,
     MatProgressBarModule,
     MatRadioModule,
     MatSidenavModule,
@@ -72,6 +72,7 @@ import { FlyTimePipe } from './pipes/fly-time.pipe';
 import { FlyPhoneBrPipe } from './pipes/fly-phone-br.pipe';
 import { FlyUploadService } from './services/fly-upload.service';
 import { FlyInputImageUploadComponent } from './components/fly-input-image-upload/fly-input-image-upload.component';
+import { FlyButtonIconComponent } from './components/fly-button-icon/fly-button-icon.component';
 
 export * from './components/base/fly-abstract-ng-model';
 export * from './components/base/fly-base-input';
@@ -94,6 +95,7 @@ export * from './components/fly-index-module/fly-index-module.component';
 export * from './components/fly-not-authorized/fly-not-authorized.component';
 export * from './components/fly-controlbar/fly-controlbar.component';
 export * from './components/fly-input-image-upload/fly-input-image-upload.component';
+export * from './components/fly-button-icon/fly-button-icon.component';
 
 export * from './components/fly-grid/fly-grid.component';
 export * from './components/fly-form-search/fly-form-search.component';
@@ -154,6 +156,7 @@ export * from './security/fly-jwt.service';
         MatIconModule,
         MatRadioModule,
         MatCheckboxModule,
+        MatListModule,
         TableModule,
         PaginationModule.forRoot(),
         BsDatepickerModule.forRoot(),
@@ -197,7 +200,8 @@ export * from './security/fly-jwt.service';
         FlyIndexComponent,
         FlyHeaderComponent,
         FlyFooterComponent,
-        FlyInputImageUploadComponent
+        FlyInputImageUploadComponent,
+        FlyButtonIconComponent
     ],
     exports: [
         FormsModule,
@@ -213,6 +217,7 @@ export * from './security/fly-jwt.service';
         MatIconModule,
         MatRadioModule,
         MatCheckboxModule,
+        MatListModule,
         TableModule,
         PaginationModule,
         BsDatepickerModule,
@@ -253,7 +258,8 @@ export * from './security/fly-jwt.service';
         FlyIndexComponent,
         FlyHeaderComponent,
         FlyFooterComponent,
-        FlyInputImageUploadComponent
+        FlyInputImageUploadComponent,
+        FlyButtonIconComponent
     ],
     entryComponents: [
         FlyAlertYesNoComponent,

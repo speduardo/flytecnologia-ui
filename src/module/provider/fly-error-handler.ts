@@ -62,6 +62,10 @@ export class FlyErrorHandler implements ErrorHandler {
                 msg = 'Você não tem permissão para executar esta ação';
             }
 
+            if (errorResponse.status === 404) {
+                msg = 'Recurso não encontrado';
+            }
+
             try {
                 if (Array.isArray(errorResponse.error)) {
                     msg = '';

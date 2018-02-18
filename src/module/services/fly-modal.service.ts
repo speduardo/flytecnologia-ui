@@ -31,6 +31,10 @@ export interface FlyModalSearchData {
     autocompleteService: FlyService<any, any>;
 }
 
+export interface FlyModalDefaultData {
+    flyService: FlyService<any, any>;
+}
+
 export interface FlyModalRef {
     close(dialogResult?: any): void;
 

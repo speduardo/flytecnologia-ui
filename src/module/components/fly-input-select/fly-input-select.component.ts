@@ -23,8 +23,8 @@ export class FlyInputSelectComponent extends FlyBaseInput implements OnInit {
     @Input() requiredConditional = false;
     @Input() readonly = false;
     @Input() placeholder = 'Selecione...';
-    @Input() fieldDescription = 'descricao';
-    @Input() fieldValue = 'valor';
+    @Input() fieldDescription = 'description';
+    @Input() fieldValue = 'value';
 
     @Input() provider: Array<any> = [];
 

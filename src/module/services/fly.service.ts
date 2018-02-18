@@ -50,6 +50,11 @@ export abstract class FlyService<T extends FlyEntity, F extends FlyFilter> {
     listNameEntityMasterPropertyList = [];
     cleanEvent: EventEmitter<any> = new EventEmitter();
 
+    /*form default*/
+    modalDefaultRef: FlyModalRef;
+    isFormDefault = false;
+    /*form default*/
+
     /*form crud*/
     modalCrudRef: FlyModalRef;
     isFormCrud = false;
@@ -640,6 +645,7 @@ export abstract class FlyService<T extends FlyEntity, F extends FlyFilter> {
         this.totalElements = response.totalElements;
         this.filter.page = response.pageNumber + 1;
         this.filter.size = response.pageSize;
+
         this.numberOfElements = response.numberOfElements;
 
         let totalPages = Math.trunc(this.totalElements / this.filter.size);

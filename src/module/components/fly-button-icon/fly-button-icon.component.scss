@@ -1,0 +1,56 @@
+.fly-button-menu {
+    margin: 10px;
+    height: 120px;
+    min-width: 150px;
+}
+
+.fly-button-menu-span-img {
+    display: block;
+}
+
+@media screen and (min-width : 768px) {
+    .fly-button-menu {
+        width: 150px;
+    }
+}
+
+.fly-button-menu-img {
+    max-height: 50px;
+    margin: -8px auto 9px;
+    display: block;
+}
+
+.fly-button-menu-label {
+    padding-left: 0;
+    padding-right: 0;
+    white-space: normal;
+    align-items: center;
+    text-align: center;
+    display: block;
+    line-height: 1em;
+    font-size: 13px;
+}
+
+.mat-raised-button.fly-button-menu:not([disabled]) img,
+.mat-raised-button.fly-button-menu:not([disabled]) img {
+    transition: transform 0.5s ease;
+    -moz-transition: transform 0.5s ease;
+    -ms-transition: transform 0.5s ease;
+    -o-transition: transform 0.5s ease;
+    -webkit-transition: transform 0.5s ease;
+}
+
+.mat-raised-button.fly-button-menu:not([disabled]):hover,
+.mat-raised-button.fly-button-menu:not([disabled]):hover {
+    background-color: rgb(221, 220, 217);
+    box-shadow: 3px 2px rgb(160, 162, 157);
+}
+
+.mat-raised-button.fly-button-menu:not([disabled]):hover img,
+.mat-raised-button.fly-button-menu:not([disabled]):hover img {
+    transform: scale(1.2);
+    -moz-transform: scale(1.2);
+    -ms-transform: scale(1.2);
+    -o-transform: scale(1.2);
+    -webkit-transform: scale(1.2);
+}
