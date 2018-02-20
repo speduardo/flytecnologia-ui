@@ -55,9 +55,7 @@
         <div [ngClass]="{'cointainer-navbar': !isMarksInViewPort}">
 
             <div class="row">
-                <div class="col-md-12 fly-line-button">
-
-
+                <div class="col-md-12 fly-line-button form-inline">
                     <button mat-raised-button
                             (click)="service.$crudSave(false, true)"
                             color="primary"
@@ -102,6 +100,10 @@
                             type="button">
                         {{ labelRemoveButton }}
                     </button>
+
+                    <ng-content select="[footer]">
+                    </ng-content>
+
                 </div>
             </div>
             <mat-progress-bar mode="indeterminate"

@@ -719,7 +719,23 @@ export abstract class FlyService<T extends FlyEntity, F extends FlyFilter> {
         }
     }
 
+    private prepareStyleColumn(column: any): void {
+        const style = column.style || {};
+
+        if (column.width) {
+            if (typeof column.width === 'string') {
+                style.width = column.width;
+            } else {
+                style.width = column.width + 'px';
+            }
+        }
+
+        column.style = style;
+    }
+
     addColumn(column: any, index = -1): void {
+        this.prepareStyleColumn(column);
+
         this._afterPushColumn(column);
 
         if (index < 0) {
