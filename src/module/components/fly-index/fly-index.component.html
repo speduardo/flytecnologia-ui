@@ -1,5 +1,5 @@
 <fly-header [headerTitle]="headerTitle"
-            *ngIf="auth.isLogged()"
+            *ngIf="isLogged"
             [imgLogo]="imgLogo"
             (clickLogo)="onClickLogo()"
             (logout)="logout()">
@@ -9,8 +9,8 @@
      [ngStyle]="{'min-height':minHeightViewPort}">
     <ng-content></ng-content>
 </div>
-
-<fly-footer *ngIf="auth.isLogged()"
+isLogged {{ isLogged }}
+<fly-footer *ngIf="isLogged"
             [imgLogo]="imgLogo"
             (clickLogo)="onClickLogo()"
             (logout)="logout()">

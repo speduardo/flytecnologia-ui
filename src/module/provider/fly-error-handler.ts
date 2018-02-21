@@ -50,8 +50,11 @@ export class FlyErrorHandler implements ErrorHandler {
 
         } else if (errorResponse instanceof FlyNotAuthenticatedError) {
             msg = 'Sua sessão expirou!';
-            this.getAuthService().cleanAccessToken();
-            this.zone.run(() => this.router().navigate(['/login']));
+
+            this.zone.run(() => {
+                this.getAuthService().cleanAccessToken();
+                this.router().navigate(['/login']);
+            });
 
         } else if (errorResponse instanceof HttpErrorResponse
             && errorResponse.status >= 400 && errorResponse.status <= 499) {
@@ -78,8 +81,10 @@ export class FlyErrorHandler implements ErrorHandler {
                     });
                 } else {
                     if (errorResponse.error.error === 'invalid_token') {
-                        this.getAuthService().cleanAccessToken();
-                        this.zone.run(() => this.router().navigate(['/login']));
+                        this.zone.run(() => {
+                            this.getAuthService().cleanAccessToken();
+                            this.router().navigate(['/login']);
+                        });
                         return;
                     } else {
                         if (!environment.production) {
@@ -88,12 +93,12 @@ export class FlyErrorHandler implements ErrorHandler {
                     }
                 }
             } catch (e) {
-                    console.error(errorResponse.error);
+                console.error(errorResponse.error);
             }
         } else {
             msg = 'Erro ao processar a ação. Tente novamente.';
 
-                console.error(errorResponse);
+            console.error(errorResponse);
         }
 
         this.zone.run(() => this.service().error(msg));

@@ -1,4 +1,4 @@
-import { ErrorHandler, ModuleWithProviders, NgModule } from '@angular/core';
+import { ErrorHandler, ModuleWithProviders, NgModule, Optional, SkipSelf } from '@angular/core';
 import { CommonModule, JsonPipe } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {
@@ -41,7 +41,6 @@ import { FlyAlertOkComponent } from './components/fly-alert/fly-alert-ok/fly-ale
 import { FlyConfigService } from './confg/fly-config.service';
 import { FlyNotFoundComponent } from './components/fly-not-found/fly-not-found.component';
 import { FlySecurityInterceptor } from './security/fly-security.interceptor';
-import { FlySecurityModule } from './security/security.module';
 import { FlyIndexModuleComponent } from './components/fly-index-module/fly-index-module.component';
 import { FlyAppService } from './services/fly-app.service';
 import { FlyAppModuleConfigService } from './confg/fly-app-module-config.service';
@@ -73,6 +72,13 @@ import { FlyPhoneBrPipe } from './pipes/fly-phone-br.pipe';
 import { FlyUploadService } from './services/fly-upload.service';
 import { FlyInputImageUploadComponent } from './components/fly-input-image-upload/fly-input-image-upload.component';
 import { FlyButtonIconComponent } from './components/fly-button-icon/fly-button-icon.component';
+import { FlyTokenService } from './security/fly-token.service';
+import { FlyCanDeactivateAppModule } from './security/fly-can-deactivate-app-module';
+import { FlyJwtService } from './security/fly-jwt.service';
+import { FlyAuthGuard } from './security/fly-auth.guard';
+import { FlyAuthService } from './security/fly-auth.service';
+import { FlyHttpClient } from './security/fly-http-client';
+import { FlyNotAuthorizedComponent } from './components/fly-not-authorized/fly-not-authorized.component';
 
 export * from './components/base/fly-abstract-ng-model';
 export * from './components/base/fly-base-input';
@@ -163,8 +169,7 @@ export * from './security/fly-jwt.service';
         TypeaheadModule.forRoot(),
         BsDropdownModule.forRoot(),
         ModalModule.forRoot(),
-        PrettyJsonModule,
-        FlySecurityModule
+        PrettyJsonModule
     ],
     declarations: [
         FlyLegendComponent,
@@ -201,7 +206,8 @@ export * from './security/fly-jwt.service';
         FlyHeaderComponent,
         FlyFooterComponent,
         FlyInputImageUploadComponent,
-        FlyButtonIconComponent
+        FlyButtonIconComponent,
+        FlyNotAuthorizedComponent
     ],
     exports: [
         FormsModule,
@@ -259,7 +265,8 @@ export * from './security/fly-jwt.service';
         FlyHeaderComponent,
         FlyFooterComponent,
         FlyInputImageUploadComponent,
-        FlyButtonIconComponent
+        FlyButtonIconComponent,
+        FlyNotAuthorizedComponent
     ],
     entryComponents: [
         FlyAlertYesNoComponent,
@@ -267,6 +274,13 @@ export * from './security/fly-jwt.service';
     ]
 })
 export class FlytecnologiaUiModule {
+    /*constructor (@Optional() @SkipSelf() parentModule: FlytecnologiaUiModule) {
+        if (parentModule) {
+            throw new Error(
+                'FlytecnologiaUiModule is already loaded. Import it in the AppModule only');
+        }
+    }*/
+
     /**
      * for root NgModule use imports:[FlytecnologiaUiModule.forRoot()]
      * for child modules you can use simple: imports:[FlytecnologiaUiModule]
@@ -278,11 +292,6 @@ export class FlytecnologiaUiModule {
             ngModule: FlytecnologiaUiModule,
             providers: [
                 {
-                    provide: HTTP_INTERCEPTORS,
-                    useClass: FlySecurityInterceptor,
-                    multi: true
-                },
-                {
                     provide: ErrorHandler,
                     useClass: FlyErrorHandler
                 },
@@ -293,7 +302,19 @@ export class FlytecnologiaUiModule {
                 FlyAppService,
                 FlyAppModuleConfigService,
                 FlyIconConfig,
-                FlyModalService
+                FlyModalService,
+
+                {
+                    provide: HTTP_INTERCEPTORS,
+                    useClass: FlySecurityInterceptor,
+                    multi: true
+                },
+                FlyTokenService,
+                FlyAuthService,
+                FlyAuthGuard,
+                FlyCanDeactivateAppModule,
+                FlyHttpClient,
+                FlyJwtService
             ]
         };
     }

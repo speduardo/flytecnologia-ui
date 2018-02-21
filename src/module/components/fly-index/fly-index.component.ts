@@ -1,4 +1,12 @@
-import { ChangeDetectionStrategy, Component, Input, OnInit, ViewEncapsulation } from '@angular/core';
+import {
+    AfterViewInit,
+    ChangeDetectionStrategy,
+    ChangeDetectorRef,
+    Component,
+    Input,
+    OnInit,
+    ViewEncapsulation
+} from '@angular/core';
 import { FlyAuthService } from '../../security/fly-auth.service';
 import { FlyAppModuleConfigService } from '../../confg/fly-app-module-config.service';
 import { Observable } from 'rxjs/Observable';
@@ -13,24 +21,44 @@ import { FlyUtilService } from '../../services/fly-util.service';
     encapsulation: ViewEncapsulation.None,
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class FlyIndexComponent implements OnInit {
+export class FlyIndexComponent implements OnInit, AfterViewInit {
     minHeightViewPort: string;
 
     @Input() headerTitle: string;
     @Input() imgLogo: string;
+
+    isLogged = false;
 
     constructor(public auth: FlyAuthService,
                 public configService: FlyAppModuleConfigService,
                 public flyAuthService: FlyAuthService,
                 private router: Router,
                 private route: ActivatedRoute,
-                private location: Location) {
+                private location: Location,
+                private ref: ChangeDetectorRef) {
+
+        console.log('FlyIndexComponent');
     }
 
-    ngOnInit() {
+    ngOnInit(): void {
         this.defineHeightViewPort();
 
         this.onResizeScrool().subscribe(() => this.defineHeightViewPort());
+
+        this.isLogged = this.auth.isLogged();
+    }
+
+    ngAfterViewInit(): void {
+        setTimeout(() => {
+            this.auth.loginEvent.subscribe(value => {
+                console.log('loginEvent => ' + value);
+
+                this.isLogged = value;
+                this.ref.detectChanges();
+            });
+
+            this.isLogged = this.auth.isLogged();
+        }, 10);
     }
 
     onResizeScrool(): Observable<boolean> {

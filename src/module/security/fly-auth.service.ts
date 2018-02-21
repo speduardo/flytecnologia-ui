@@ -6,11 +6,15 @@ import { Observable } from 'rxjs/Observable';
 import { FlyConfigService } from '../confg/fly-config.service';
 import { FlyJwtService } from './fly-jwt.service';
 import { FlyNotAuthenticatedError } from './fly-not-authenticated-error';
+import { Subject } from 'rxjs/Subject';
 
 @Injectable()
 export class FlyAuthService {
-    redirectUrl: string;
     static clientId: string;
+
+    loginEvent = new Subject<boolean>();
+
+    redirectUrl: string;
     oauthTokenUrl: string;
     tokensRenokeUrl: string;
     jwtPayload: any;
@@ -20,6 +24,7 @@ export class FlyAuthService {
     constructor(private http: HttpClient,
                 private jwtService: FlyJwtService,
                 public config: FlyConfigService) {
+
         this.oauthTokenUrl = `${config.apiUrl}/oauth/token`;
         this.tokensRenokeUrl = `${config.apiUrl}/login/revoke`;
         this.loadToken();
@@ -71,16 +76,12 @@ export class FlyAuthService {
                     observer.complete();
                 }, (error) => {
                     if (error.status === 400) {
-                        const responseJson = error.json();
-
-                        if (responseJson.error === 'invalid_grant') {
-                            observer.error('Usuário ou password inválida!');
-                        } else {
-                            observer.error(error);
-                        }
-
-                        observer.complete();
+                        observer.error('Usuário ou password inválido!');
+                    } else {
+                        observer.error(error.toString());
                     }
+
+                    observer.complete();
                 });
         });
     }
@@ -135,6 +136,8 @@ export class FlyAuthService {
         localStorage.removeItem('token');
         this.jwtPayload = null;
         FlyAuthService.clientId = null;
+
+        this.loginEvent.next(false);
     }
 
     isLogged(): boolean {
@@ -180,6 +183,8 @@ export class FlyAuthService {
         this.jwtPayload = this.jwtService.decodeToken(token);
         localStorage.setItem('token', token);
         FlyAuthService.clientId = this.jwtPayload.cl;
+
+        this.loginEvent.next(true);
     }
 
     private loadToken() {
