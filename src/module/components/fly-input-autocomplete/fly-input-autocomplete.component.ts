@@ -168,6 +168,8 @@ export class FlyInputAutocompleteComponent extends FlyBaseInput implements OnIni
                     () => {
                         this.textTyped = '';
                     });
+        } else {
+            this.textTyped = '';
         }
     }
 

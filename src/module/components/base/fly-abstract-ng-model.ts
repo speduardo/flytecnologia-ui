@@ -19,7 +19,7 @@ export abstract class FlyAbstractNgModel<T> implements ControlValueAccessor {
     @Input() ngModelExtra: Array<FlyNgModelExtra> = [];
     @Input() ngModelClean: Array<FlyNgModelExtra> = [];
     @Input() disabled = false;
-    @Input() clearWhenDisable: boolean;
+    @Input() clearWhenDisabled: boolean;
 
     public ignoreEqualValue = true;
 
@@ -98,7 +98,7 @@ export abstract class FlyAbstractNgModel<T> implements ControlValueAccessor {
     setDisabledState(disabled: boolean): void {
         this.disabled = disabled;
 
-        if (disabled && this.clearWhenDisable) {
+        if (disabled && this.clearWhenDisabled) {
             this.value = null;
         }
     }

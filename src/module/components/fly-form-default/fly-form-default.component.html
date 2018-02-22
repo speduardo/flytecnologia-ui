@@ -15,18 +15,6 @@
                         {{ header }}
                     </span>
 
-                <button mat-fab color="accent"
-                        (click)="service.goToSearch()"
-                        class="float-right"
-                        type="button"
-                        *ngIf="!service.isPopup"
-                        tabindex="-1"
-                        style="margin-top:-18px">
-                    <mat-icon aria-label="Search"
-                              fontSet="fa"
-                              fontIcon="fa-search"></mat-icon>
-                </button>
-
                 <button mat-icon-button
                         (click)="service.closePopup()"
                         class="float-right fly-close-modal"
@@ -57,9 +45,6 @@
                     </ng-content>
                 </div>
             </div>
-            <mat-progress-bar mode="indeterminate"
-                              *ngIf="isDisabledButtons()">
-            </mat-progress-bar>
         </div>
     </nav>
 </ng-template>

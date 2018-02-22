@@ -3,6 +3,7 @@ import { FlyEntity } from './entity/fly-entity';
 import { FlyEntityImpl } from './entity/fly-entity-impl';
 import { FlyEmbeddedEntity } from './entity/fly-embedded-entity';
 import * as _ from 'lodash';
+import * as moment from 'moment';
 
 @Injectable()
 export class FlyUtilService {
@@ -107,5 +108,13 @@ export class FlyUtilService {
         return value.toString().toLowerCase() === 'false';
     }
 
+    getLastDateOfMonth(year: number, month: number): Date {
+        const date = year + '-' + (month < 10 ? ('0' + month) : month) + '-01';
+        return moment(date).endOf('month').toDate();
+    }
 
+    getLastDayOfMonth(year: number, month: number): string {
+        const date = year + '-' + (month < 10 ? ('0' + month) : month) + '-01';
+        return moment(date).endOf('month').format('DD');
+    }
 }

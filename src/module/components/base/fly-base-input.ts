@@ -35,15 +35,15 @@ export abstract class FlyBaseInput extends FlyAbstractNgModel<any> implements On
     }
 
     _keyup($event: any) {
-        /*this.keyup.next($event);*/
+        this.keyup.next($event);
     }
 
     _keydown($event: any) {
-        /*this.keydown.next($event);*/
+        this.keydown.next($event);
     }
 
     public _change($event: any) {
-        /*this.change.next($event);*/
+        this.change.next($event);
     }
 
     _input($event: any) {

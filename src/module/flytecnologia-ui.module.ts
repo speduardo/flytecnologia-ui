@@ -25,6 +25,8 @@ import { ModalModule } from 'ngx-bootstrap/modal';
 
 import { PrettyJsonModule } from 'angular2-prettyjson';
 
+import { MyDatePickerModule } from 'mydatepicker';
+
 import 'hammerjs';
 
 import { FlyInputTextComponent } from './components/fly-input-text/fly-input-text.component';
@@ -79,6 +81,7 @@ import { FlyAuthGuard } from './security/fly-auth.guard';
 import { FlyAuthService } from './security/fly-auth.service';
 import { FlyHttpClient } from './security/fly-http-client';
 import { FlyNotAuthorizedComponent } from './components/fly-not-authorized/fly-not-authorized.component';
+import { FlyInputDateInlineComponent } from './components/fly-input-date-inline/fly-input-date-inline.component';
 
 export * from './components/base/fly-abstract-ng-model';
 export * from './components/base/fly-base-input';
@@ -90,6 +93,7 @@ export * from './components/fly-input-select/fly-input-select.component';
 export * from './components/fly-input-upload/fly-input-upload.component';
 export * from './components/fly-input-text/fly-input-text.component';
 export * from './components/fly-input-autocomplete/fly-input-autocomplete.component';
+export * from './components/fly-input-date-inline/fly-input-date-inline.component';
 export * from './components/fly-legend/fly-legend.component';
 export * from './components/fly-hr/fly-hr.component';
 export * from './components/fly-tabset/fly-tab/fly-tab.component';
@@ -169,7 +173,8 @@ export * from './security/fly-jwt.service';
         TypeaheadModule.forRoot(),
         BsDropdownModule.forRoot(),
         ModalModule.forRoot(),
-        PrettyJsonModule
+        PrettyJsonModule,
+        MyDatePickerModule
     ],
     declarations: [
         FlyLegendComponent,
@@ -207,7 +212,8 @@ export * from './security/fly-jwt.service';
         FlyFooterComponent,
         FlyInputImageUploadComponent,
         FlyButtonIconComponent,
-        FlyNotAuthorizedComponent
+        FlyNotAuthorizedComponent,
+        FlyInputDateInlineComponent
     ],
     exports: [
         FormsModule,
@@ -231,6 +237,7 @@ export * from './security/fly-jwt.service';
         BsDropdownModule,
         ModalModule,
         PrettyJsonModule,
+        MyDatePickerModule,
         FlyLegendComponent,
         FlyHrComponent,
         FlyTabsetComponent,
@@ -266,7 +273,8 @@ export * from './security/fly-jwt.service';
         FlyFooterComponent,
         FlyInputImageUploadComponent,
         FlyButtonIconComponent,
-        FlyNotAuthorizedComponent
+        FlyNotAuthorizedComponent,
+        FlyInputDateInlineComponent
     ],
     entryComponents: [
         FlyAlertYesNoComponent,

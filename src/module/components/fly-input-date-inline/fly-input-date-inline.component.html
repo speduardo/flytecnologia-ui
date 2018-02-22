@@ -1,0 +1,30 @@
+<div class="fly-input-date-inline">
+    <div class="form-group"
+         [ngClass]="{ 'has-error': inputField.touched && !inputField.valid }">
+        <label [attr.for]="id"
+               class="control-label"
+               *ngIf="hideLabel !== false && label">
+
+            {{label}}
+            <i class="fly-input-label-required fa fa-asterisk"
+               *ngIf="required"></i>
+            <span *ngIf="requiredConditional">
+                (<i class="fly-input-label-required fa fa-asterisk"></i>)
+            </span>
+
+        </label>
+
+        <my-date-picker [id]="id"
+                        [options]="myDatePickerOptions"
+                        #inputField="ngModel"
+                        #inputHtml
+                        [(ngModel)]="value"
+                        [required]="required"
+                        [disabled]="disabled"
+                        (dateChanged)="onChangeDate($event)"
+                        [defaultMonth]="defaultMonth">
+        </my-date-picker>
+
+        {{ myDatePickerOptions.maxYear }}
+    </div>
+</div>
