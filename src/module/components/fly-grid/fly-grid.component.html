@@ -96,7 +96,7 @@
         <ng-template pTemplate="summary">
 
             <div class="row margin-zero padding-zero fly-grid-footer-pagination">
-                <div class="col-md-9 padding-zero text-left">
+                <div class="col-lg-9 padding-zero text-left">
                     <button mat-raised-button
                             (click)="service.openPopupCrudForm()"
                             color="primary"
@@ -124,12 +124,12 @@
                     >
                     </pagination>
                 </div>
-                <div class="col-md-3 padding-zero float-right text-right"
+                <div class="col-lg-3 padding-zero float-right text-right"
                      *ngIf="service.totalPages > 1 && showPagination;  else juntOnePageGrid">
                     Página {{ service.filter.page }} / {{ service.totalPages }} - Reg: {{ service.totalElements }}
                 </div>
                 <ng-template #juntOnePageGrid>
-                    <div class="col-md-3 padding-zero float-right text-right">
+                    <div class="col-lg-3 padding-zero float-right text-right">
                         Reg: {{ service.totalElements }}
                     </div>
                 </ng-template>

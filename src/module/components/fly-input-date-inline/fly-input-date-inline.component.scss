@@ -1,0 +1,10 @@
+@import '~@angular/material/theming';
+@import '../../../../theming';
+
+.mydp .disabled {
+    background-color: #FFF !important;
+}
+
+.mydp .weekdaytitle {
+    background-color: lighten($primaryColor, 30%) !important;
+}

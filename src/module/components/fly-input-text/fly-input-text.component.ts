@@ -44,8 +44,8 @@ export class FlyInputTextComponent extends FlyBaseInput implements AfterViewInit
 
     numberPattern = /^[0-9]*$/;
 
-    constructor(private flyUtilService: FlyUtilService) {
-        super(flyUtilService);
+    constructor() {
+        super();
     }
 
     ngOnInit(): void {

@@ -1,6 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FlyAbstractNgModel, ngModelProvider } from '../base/fly-abstract-ng-model';
-import { FlyUtilService } from '../../services/fly-util.service';
 import { NgModel } from '@angular/forms';
 
 let nextUniqueId = 0;
@@ -24,7 +23,7 @@ export class FlyInputCheckboxComponent extends FlyAbstractNgModel<boolean> imple
 
     @ViewChild('inputField') inputField: NgModel;
 
-    constructor(private flyUtilService: FlyUtilService) {
+    constructor() {
         super();
     }
 

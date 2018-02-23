@@ -49,10 +49,9 @@ export class FlyInputAutocompleteComponent extends FlyBaseInput implements OnIni
     @ViewChild('inputHtml') inputHtml: ElementRef;
     @ViewChild('inputField') inputField: NgModel;
 
-    constructor(private utilService: FlyUtilService,
-                private configService: FlyConfigService,
+    constructor(private configService: FlyConfigService,
                 private dialog: MatDialog) {
-        super(utilService);
+        super();
 
         this.provider = Observable.create((observer: any) => {
             // Runs on every search

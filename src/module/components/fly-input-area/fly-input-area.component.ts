@@ -35,8 +35,8 @@ export class FlyInputAreaComponent extends FlyBaseInput implements AfterViewInit
 
     @ViewChild('inputField') inputField: NgModel;
 
-    constructor(private flyUtilService: FlyUtilService) {
-        super(flyUtilService);
+    constructor() {
+        super();
     }
 
     ngOnInit(): void {

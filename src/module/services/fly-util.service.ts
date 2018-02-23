@@ -1,11 +1,9 @@
-import { Injectable } from '@angular/core';
 import { FlyEntity } from './entity/fly-entity';
 import { FlyEntityImpl } from './entity/fly-entity-impl';
 import { FlyEmbeddedEntity } from './entity/fly-embedded-entity';
 import * as _ from 'lodash';
 import * as moment from 'moment';
 
-@Injectable()
 export class FlyUtilService {
 
     static viewPortSize = 0;
@@ -76,23 +74,23 @@ export class FlyUtilService {
         );
     }
 
-    getColClass(value: any, defaultValue: number): string {
+    static getColClass(value: any, defaultValue: number): string {
         if (!defaultValue) {
             defaultValue = 3;
         }
 
         if (!value) {
-            return 'col-md-' + defaultValue;
+            return 'col-lg-' + defaultValue;
         }
 
         if (value.toString() === '-1') {
             return null;
         }
 
-        return 'col-md-' + value;
+        return 'col-lg-' + value;
     }
 
-    isTrue(value: any): boolean {
+    static isTrue(value: any): boolean {
         if (!value) {
             return false;
         }
@@ -100,7 +98,7 @@ export class FlyUtilService {
         return value.toString().toLowerCase() === 'true';
     }
 
-    isFalse(value: any): boolean {
+    static isFalse(value: any): boolean {
         if (!value && value !== false) {
             return false;
         }
@@ -108,12 +106,12 @@ export class FlyUtilService {
         return value.toString().toLowerCase() === 'false';
     }
 
-    getLastDateOfMonth(year: number, month: number): Date {
+    static getLastDateOfMonth(year: number, month: number): Date {
         const date = year + '-' + (month < 10 ? ('0' + month) : month) + '-01';
         return moment(date).endOf('month').toDate();
     }
 
-    getLastDayOfMonth(year: number, month: number): string {
+    static getLastDayOfMonth(year: number, month: number): string {
         const date = year + '-' + (month < 10 ? ('0' + month) : month) + '-01';
         return moment(date).endOf('month').format('DD');
     }

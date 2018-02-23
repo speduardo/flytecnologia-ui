@@ -1,6 +1,14 @@
-import { Component, ElementRef, Input, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import {
+    Component,
+    ElementRef,
+    Input,
+    OnChanges,
+    OnInit,
+    SimpleChanges,
+    ViewChild,
+    ViewEncapsulation
+} from '@angular/core';
 
-import { FlyUtilService } from '../../services/fly-util.service';
 import { FlyBaseInput } from '../base/fly-base-input';
 import { ngModelProvider } from '../base/fly-abstract-ng-model';
 
@@ -15,7 +23,7 @@ let nextUniqueId = 0;
         ngModelProvider(FlyInputSelectComponent)
     ]
 })
-export class FlyInputSelectComponent extends FlyBaseInput implements OnInit {
+export class FlyInputSelectComponent extends FlyBaseInput implements OnInit, OnChanges {
     @Input() label: string;
     @Input() hideLabel: boolean;
     @Input() id = `fly-input-select-${nextUniqueId++}`;
@@ -30,11 +38,14 @@ export class FlyInputSelectComponent extends FlyBaseInput implements OnInit {
 
     @ViewChild('inputHtml') inputHtml: ElementRef;
 
-    constructor(private flyUtilService: FlyUtilService) {
-        super(flyUtilService);
+    constructor() {
+        super();
     }
 
     ngOnInit(): void {
         super.ngOnInit();
+    }
+
+    ngOnChanges(changes: SimpleChanges) {
     }
 }

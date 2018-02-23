@@ -14,7 +14,7 @@ export abstract class FlyBaseInput extends FlyAbstractNgModel<any> implements On
     @Output() keydown: EventEmitter<Object> = new EventEmitter<Object>();
     @Output() change: EventEmitter<Object> = new EventEmitter<Object>();
 
-    constructor(private _flyUtilService: FlyUtilService) {
+    constructor() {
         super();
     }
 
@@ -47,6 +47,5 @@ export abstract class FlyBaseInput extends FlyAbstractNgModel<any> implements On
     }
 
     _input($event: any) {
-        //console.log($event.target);
     }
 }

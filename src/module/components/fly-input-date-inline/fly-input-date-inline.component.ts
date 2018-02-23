@@ -9,14 +9,13 @@ import {
     ViewEncapsulation
 } from '@angular/core';
 import { NgModel } from '@angular/forms';
-
-import { FlyUtilService } from '../../services/fly-util.service';
 import { FlyBaseInput } from '../base/fly-base-input';
 import { ngModelProvider } from '../base/fly-abstract-ng-model';
 import { FlyConfigService } from '../../confg/fly-config.service';
 
 import * as moment from 'moment';
 import { IMyDpOptions, IMyMarkedDates } from 'mydatepicker';
+import { FlyUtilService } from '../../services/fly-util.service';
 
 let nextUniqueId = 0;
 
@@ -53,10 +52,8 @@ export class FlyInputDateInlineComponent extends FlyBaseInput implements OnInit,
     defaultMonth: string;
     myDatePickerOptions: IMyDpOptions;
 
-    constructor(private utilService: FlyUtilService,
-                private configService: FlyConfigService) {
-        super(utilService);
-
+    constructor(private configService: FlyConfigService) {
+        super();
         this.configMyDatePricker();
     }
 
@@ -70,6 +67,7 @@ export class FlyInputDateInlineComponent extends FlyBaseInput implements OnInit,
             inline: true,
             showTodayBtn: false,
             showDecreaseDateBtn: false,
+            firstDayOfWeek: 'mo',
         };
 
         this.configFixedProperties();
@@ -111,11 +109,19 @@ export class FlyInputDateInlineComponent extends FlyBaseInput implements OnInit,
         }
 
         if (!this.showMonthSelector && this.year && this.month) {
-            this.myDatePickerOptions.disableUntil = {year: this.year, month: this.month, day: 1};
+            const beforeMonth = this.month > 1 ? this.month - 1 : 1;
+            const beforeYear = this.month > 1 ? this.year : this.year - 1;
 
-            const lastDay = this.utilService.getLastDayOfMonth(this.year, this.month);
+            const beforeDay = FlyUtilService.getLastDayOfMonth(beforeYear, beforeMonth);
 
-            this.myDatePickerOptions.disableSince = {year: this.year, month: this.month, day: +lastDay};
+            this.myDatePickerOptions.disableUntil = {year: beforeYear, month: beforeMonth, day: +beforeDay};
+
+            const afterMonth = this.month === 12 ? 1 : this.month + 1;
+            const afterYear = this.month === 12 ? this.year + 1 : this.year;
+
+            const afterDay = FlyUtilService.getLastDayOfMonth(afterYear, afterMonth);
+
+            this.myDatePickerOptions.disableSince = {year: afterYear, month: afterMonth, day: +afterDay};
         }
     }
 

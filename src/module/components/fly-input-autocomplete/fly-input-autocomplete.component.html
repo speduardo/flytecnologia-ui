@@ -50,14 +50,16 @@
                         type="button"
                         (click)="openSearchPopup() "
                         [disabled]="service.isSearching || disabled"
-                        *ngIf="service.searchFormComponent">
+                        *ngIf="service.searchFormComponent"
+                        tabindex="-1">
                     <i class="fa fa-search"></i>
                 </button>
                 <button class="btn btn-secondary"
                         type="button"
                         [disabled]="service.isSearching || disabled"
                         (click)="openCrudPopup() "
-                        *ngIf="service.crudFormComponent">
+                        *ngIf="service.crudFormComponent"
+                        tabindex="-1"   >
                     <i class="fa fa-plus"></i>
                 </button>
             </div>

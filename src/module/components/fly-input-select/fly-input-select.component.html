@@ -30,6 +30,7 @@
                 (keydown)="_keydown($event)"
                 (change)="_change($event)"
                 (input)="_input($event)">
+            <option [ngValue]="null" selected *ngIf="!required">...</option>
             <option *ngFor="let item of provider"
                     [value]="item[fieldValue]">{{item[fieldDescription]}}
             </option>

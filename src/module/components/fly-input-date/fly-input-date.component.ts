@@ -39,9 +39,8 @@ export class FlyInputDateComponent extends FlyBaseInput implements OnInit {
 
     bsConfig: Partial<BsDatepickerConfig>;
 
-    constructor(private utilService: FlyUtilService,
-                private configService: FlyConfigService) {
-        super(utilService);
+    constructor(private configService: FlyConfigService) {
+        super();
 
         if (!this.dateInputFormat) {
             this.dateInputFormat = configService.dateInputFormat.toUpperCase();

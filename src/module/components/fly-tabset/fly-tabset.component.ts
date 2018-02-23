@@ -29,7 +29,7 @@ export class FlyTabsetComponent implements AfterContentInit, OnInit {
 
     public classColor: string;
 
-    constructor(private flyUtilService: FlyUtilService) {
+    constructor() {
     }
 
     private _selectedIndex: number;
@@ -71,7 +71,7 @@ export class FlyTabsetComponent implements AfterContentInit, OnInit {
     }
 
     public selectTab(tab: FlyTabComponent): void {
-        if (this.flyUtilService.isTrue(tab.disabled)) {
+        if (FlyUtilService.isTrue(tab.disabled)) {
             return;
         }
         // deactivate all tabs
